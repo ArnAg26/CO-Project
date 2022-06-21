@@ -1,0 +1,6 @@
+var X
+mov $10 R1
+mov $100 R2
+mul R3 R1 R2
+st R3 X
+hlt
