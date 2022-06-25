@@ -2,7 +2,9 @@ with open("input4.txt","r") as f:
     L=f.readlines()
     lst=[]
     for i in L:
-        lst.append(i.split())
+        i=i.split()
+        if i!=[]:
+            lst.append(i)
 
 def printInput(lst):
     for i in lst:
