@@ -1,8 +1,4 @@
 
-import opcode
-import re
-
-
 def is_valid_opcode(ins_l):
 
     #check if length is correct
@@ -12,7 +8,10 @@ def is_valid_opcode(ins_l):
     'var']
 
     for i in ins_l:
-        if i[0] not in d:
+        if (i[0][-1]==":"):
+            continue;
+        
+        elif i[0] not in d:
             return -1
     
     return 1
@@ -24,6 +23,8 @@ def error_len(ins_l):
     'not':3,'cmp':3,'jmp':2,'jlt':2,'jgt':2,'je':2,'hlt':1,'var':2}
 
     for i in ins_l:
+        if (i[0][-1]==":"):
+            continue
         if (len(i)!=d[i[0]]):
             # print(i)
             return -1
@@ -137,6 +138,8 @@ def syntax_error(insl):
     d1=['ls','rs','ld','st']
 
     for i in insl:
+        if i[0][-1]==":":
+            continue
         if i[0]=='mov':
             a=check_mov(i[1:])
             if (a==-1):
@@ -176,19 +179,11 @@ def syntax_error(insl):
             return -1
 
     return 1
-    # e1=reg_error_l1(l1)
-    # e2=reg_error_l2(l2)
-    # e3=reg_error_l3(l3)
-
-    # if (e1 and e2 and e3):
-    #     return 1
-    # else:
-    #     return -1
-    
+   
 
 
 
-with open("4.txt",'r') as f:
+with open("t.txt",'r') as f:
 
     ins_l=[]
     for i in f.readlines():
