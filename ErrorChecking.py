@@ -22,7 +22,6 @@ def haltError(lst):
     return 1
 
 #print(haltError(lst))
-varlist=[]
 def VarList(lst,varlist):
     i=0
     while lst[i][0]=='var':
@@ -36,7 +35,6 @@ def VarList(lst,varlist):
             return -1
     return 1
 
-labellist=[]
 
 def Labellist(lst,labellist):
     i=0
