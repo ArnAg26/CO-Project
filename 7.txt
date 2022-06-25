@@ -1,0 +1,11 @@
+var X
+var Y
+loop:
+mov R1 $10
+mov R2 $100
+rs R0 $255
+mov FLAGS R0
+mul R3 R1 R2
+st R3 X
+je loop
+hlt
