@@ -1,7 +1,6 @@
 var X
 var Y
-loop:
-mov R1 $10
+loop: mov R1 $10
 mov R2 $100
 rs r0 $255
 mov FLAGS R0
