@@ -121,7 +121,7 @@ def reg_error_l1(l1):
 
     regl=['R0','R1','R2','R3','R4','R5','R6','FLAGS']
 
-    reg=l1[0]
+    reg=l1[1]
 
 
     if (reg not in regl):
@@ -131,8 +131,8 @@ def reg_error_l1(l1):
 
 def reg_error_l2(l2):
 
-    reg1=l2[0]
-    reg2=l2[1]
+    reg1=l2[1]
+    reg2=l2[2]
 
     regl=['R0','R1','R2','R3','R4','R5','R6','FLAGS']
     if (reg1 not in regl) or (reg2 not in regl):
@@ -143,9 +143,9 @@ def reg_error_l2(l2):
 
 def reg_error_l3(l3):
 
-    reg1=l3[0]
-    reg2=l3[1]
-    reg3=l3[2]
+    reg1=l3[1]
+    reg2=l3[2]
+    reg3=l3[3]
 
     regl=['R0','R1','R2','R3','R4','R5','R6','FLAGS']
     
@@ -202,13 +202,13 @@ def syntax_error(insl):
                 return -1,linelist[i]
 
         elif ins_l[i][0] in d1:
-            l1.append(ins_l[i][1:])
+            l1.append(ins_l[i])
 
         elif ins_l[i][0] in d2:
-            l2.append(ins_l[i][1:])
+            l2.append(ins_l[i])
 
         elif ins_l[i][0] in d3:
-            l3.append(ins_l[i][1:])
+            l3.append(ins_l[i])
 
     # print(l1)
     # print(l2)
@@ -216,23 +216,23 @@ def syntax_error(insl):
     
 
 
-    for i in l1:
-        e1=reg_error_l1(i)
+    for i in range(len(ins_l)):
+        if ins_l[i] in l1:
+            e1=reg_error_l1(ins_l[i])
+            if(e1==-1):
+                return -1,linelist[i]
 
-        if(e1==-1):
-            return -1,"0"
+        if ins_l[i] in l2:
+            e2=reg_error_l2(ins_l[i])
 
-    for i in l2:
-        e2=reg_error_l2(i)
+            if (e1==-1):
+                return -1,linelist[i]
 
-        if (e1==-1):
-            return -1,"0"
+        if ins_l[i] in l3:
+            e3=reg_error_l3(ins_l[i])
 
-    for i in l3:
-        e3=reg_error_l3(i)
-
-        if (e3==-1):
-            return -1,"0"
+            if (e3==-1):
+                return -1,linelist[i]
 
     return 1,0
     # e1=reg_error_l1(l1)
@@ -252,10 +252,10 @@ def ErrorCheck(lst):        #ins_l
         return "Line "+y+" Invalid instruction used"
     z,y=error_len(ins_l)
     if z==-1:
-        print("Line "+y+" Invalid syntax")
+        return "Line "+y+" Invalid syntax"
     z,y=syntax_error(ins_l)
     if z==-1:
-        print("Line "+y+" Invalid Snytax1")
+        return "Line "+y+" Invalid Snytax"
     z,y=VarList(lst,varlist)
     if z==1:
         print(varlist)
@@ -301,16 +301,18 @@ with open("8.txt",'r') as f:
     for i in f.readlines():
         split=i.split()
         if (split!=[]):
-            linelist.append(str(ctr))
-            ins_l.append(i.split())
+            if split[0][-1]==":":
+                linelist.append(str(ctr))
+                ins_l.append([split[0]])
+                linelist.append(str(ctr))
+                ins_l.append(split[1:])
+            else:
+                linelist.append(str(ctr))
+                ins_l.append(split)
         ctr+=1
     
     print(ins_l)
     print(linelist)
     
     print(ErrorCheck(ins_l))
-    
-
-
-
     f.close()
