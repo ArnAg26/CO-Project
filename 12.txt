@@ -1,0 +1,7 @@
+var x
+var y
+var z
+mov R1 $10
+rs R1 $4
+st x
+hlt
