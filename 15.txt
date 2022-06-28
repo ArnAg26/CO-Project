@@ -1,0 +1,15 @@
+var x
+var y
+var z
+var w
+mov R0 $0
+mov R1 $1
+xor R0 R1 R3
+or RO R1 R4
+and R0 R1 R5
+not R0 R0
+st x R3
+st y R4
+st z R5
+st w R0
+hlt
