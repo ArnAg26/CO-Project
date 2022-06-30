@@ -1,4 +1,6 @@
 
+
+KeyWord=["hlt","var","add","sub","mul","div","R0","R1","R2","R3","R4","R5","R6","FLAGS","and","or","mov","xor","ls","rs","not","cmp","jmp","jgt","jlt","je","ld","st"]
 def haltError(lst,linelist):
     if lst[-1]!=['hlt']:
         return 0,linelist[-1]
@@ -13,6 +15,8 @@ def VarList(lst,varlist,linelist):    #ins_l,[]
     while lst[i][0]=='var':
         if len(lst[i])>2:
             return -1,linelist[i]
+        if lst[i][1] in KeyWord:
+            return 0,linelist[i]
         varlist.append(lst[i][1])
         i+=1
     j=i
@@ -22,16 +26,18 @@ def VarList(lst,varlist,linelist):    #ins_l,[]
     return 1,0
 
 
-def Labellist(lst,labellist):   #ins_l,[]
+def Labellist(lst,labellist,linelist):   #ins_l,[]
     i=0
     for i in range(len(lst)):
         # if len(lst[i])>1 and lst[i][1][-1]==":":
         #     return -1
         if lst[i][0][-1]==":":
+            if lst[i][0][:-1] in KeyWord:
+                return -1,linelist[i]
             labellist.append(lst[i][0][:-1])
     
     return 1,0
-            
+  
 
 def UndefinedVariables(lst,varlist,labellist,linelist):  #ins_l, varlist, labellist
     for i in range(len(lst)):
@@ -261,12 +267,16 @@ def ErrorCheck(lst,linelist):        #ins_l
     if z==1:
         pass
         #print(varlist)
+    elif z==0:
+        return "Line "+y+" Invalid name of Variable"
     else:
         return "Line "+y+" Variables not defined at start"
     z,y=Labellist(lst,labellist)
     if z==1:
         pass
         #print(labellist)
+    elif z==-1:
+        return "Line "+y+" Invalid name of Label"
     else:
         return "Line "+y+" Space between label and colon"
     z,y=ImmediateError(lst,linelist)
@@ -530,7 +540,7 @@ if y :
     f = open("Output.txt","w")
     for i in l:
         counter += 1
-        if i == " ":
+        if i == "":
             pass
         else:
             m = [x for x in i.split()]
