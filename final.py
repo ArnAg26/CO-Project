@@ -274,7 +274,7 @@ def ErrorCheck(lst,linelist):        #ins_l
         return "Line "+y+" Invalid name of Variable"
     else:
         return "Line "+y+" Variables not defined at start"
-    z,y=Labellist(lst,labellist)
+    z,y=Labellist(lst,labellist,linelist)
     if z==1:
         pass
         #print(labellist)
