@@ -1,5 +1,6 @@
 
 
+
 KeyWord=["hlt","var","add","sub","mul","div","R0","R1","R2","R3","R4","R5","R6","FLAGS","and","or","mov","xor","ls","rs","not","cmp","jmp","jgt","jlt","je","ld","st"]
 def haltError(lst,linelist):
     if lst[-1]!=['hlt']:
@@ -206,7 +207,7 @@ def syntax_error(ins_l,linelist):
         if ins_l[i][0]=='mov':
             a=check_mov(ins_l[i][1:],linelist)
             if (a==-1):
-                return -1,linelist[i]
+                return 0,linelist[i]
 
         elif ins_l[i][0] in d1:
             l1.append(ins_l[i])
@@ -263,6 +264,8 @@ def ErrorCheck(lst,linelist):        #ins_l
     z,y=syntax_error(lst,linelist)
     if z==-1:
         return "Line "+y+" Invalid Snytax"
+    elif z==0:
+        return "Line "+y+" Register Error"
     z,y=VarList(lst,varlist,linelist)
     if z==1:
         pass
