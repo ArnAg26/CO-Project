@@ -1,7 +1,3 @@
-
-
-
-KeyWord=["hlt","var","add","sub","mul","div","R0","R1","R2","R3","R4","R5","R6","FLAGS","and","or","mov","xor","ls","rs","not","cmp","jmp","jgt","jlt","je","ld","st"]
 def haltError(lst,linelist):
     if lst[-1]!=['hlt']:
         return 0,linelist[-1]
@@ -16,8 +12,6 @@ def VarList(lst,varlist,linelist):    #ins_l,[]
     while lst[i][0]=='var':
         if len(lst[i])>2:
             return -1,linelist[i]
-        if lst[i][1] in KeyWord:
-            return 0,linelist[i]
         varlist.append(lst[i][1])
         i+=1
     j=i
@@ -27,18 +21,16 @@ def VarList(lst,varlist,linelist):    #ins_l,[]
     return 1,0
 
 
-def Labellist(lst,labellist,linelist):   #ins_l,[]
+def Labellist(lst,labellist):   #ins_l,[]
     i=0
     for i in range(len(lst)):
         # if len(lst[i])>1 and lst[i][1][-1]==":":
         #     return -1
         if lst[i][0][-1]==":":
-            if lst[i][0][:-1] in KeyWord:
-                return -1,linelist[i]
             labellist.append(lst[i][0][:-1])
     
     return 1,0
-  
+            
 
 def UndefinedVariables(lst,varlist,labellist,linelist):  #ins_l, varlist, labellist
     for i in range(len(lst)):
@@ -207,7 +199,7 @@ def syntax_error(ins_l,linelist):
         if ins_l[i][0]=='mov':
             a=check_mov(ins_l[i][1:],linelist)
             if (a==-1):
-                return 0,linelist[i]
+                return -1,linelist[i]
 
         elif ins_l[i][0] in d1:
             l1.append(ins_l[i])
@@ -263,23 +255,17 @@ def ErrorCheck(lst,linelist):        #ins_l
         return "Line "+y+" Invalid syntax"
     z,y=syntax_error(lst,linelist)
     if z==-1:
-        return "Line "+y+" Invalid Snytax"
-    elif z==0:
-        return "Line "+y+" Register Error"
+        return "Line "+y+" Invalid Syntax"
     z,y=VarList(lst,varlist,linelist)
     if z==1:
         pass
         #print(varlist)
-    elif z==0:
-        return "Line "+y+" Invalid name of Variable"
     else:
         return "Line "+y+" Variables not defined at start"
-    z,y=Labellist(lst,labellist,linelist)
+    z,y=Labellist(lst,labellist)
     if z==1:
+        # print(labellist)
         pass
-        #print(labellist)
-    elif z==-1:
-        return "Line "+y+" Invalid name of Label"
     else:
         return "Line "+y+" Space between label and colon"
     z,y=ImmediateError(lst,linelist)
@@ -328,11 +314,12 @@ def input():
         #print(linelist)
         
         x = (ErrorCheck(ins_l,linelist))
-        print (x)
         if x ==  "No Errors":
             return 1
         else:
+            print (x)
             return 0
+
 
 def add(e1,e2,e3):
     ans = ""
@@ -490,6 +477,7 @@ def jgt(e1):
     ans += r
     return ans
 def je(e1):
+    # print(e1)
     ans = ""
     ans += dic_isa["je"]["opcode"]
     ans += "000"
@@ -547,11 +535,21 @@ if y :
             pass
         else:
             m = [x for x in i.split()]
-            # print(m)
+            #print(m)
             if m[0] == "var" :
                 variable[m[1]] = memory[counter]   
             if m[0][-1] == ":" :
+                # print(m)
                 labels[m[0][0:-1]] = memory[counter]
+                # print(m[0][0:-1])
+    for i in l:
+        if i == "":
+            pass
+        else:
+            m = [x for x in i.split()]
+            if m[0] == "var":
+                pass
+            if m[0][-1] == ":" :
                 m = m[1:]
             if m[0] == "add":
                 ans = add(m[1],m[2],m[3])
@@ -609,6 +607,7 @@ if y :
                 ans = jgt(m[1])
                 f.write(ans + "\n")
             elif m[0] == "je":
+                # print (labels.keys())
                 ans = je(m[1])
                 f.write(ans + "\n")
             elif m[0] == "hlt":
