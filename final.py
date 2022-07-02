@@ -30,6 +30,9 @@ def Labellist(lst,labellist,linelist,extra):   #ins_l,[]
         ctr=[x for x in extra[i] if x[-1]==':']
         if len(ctr)>1:
             return -1,linelist[i]
+
+    
+
     # print(extra)
     for i in range(len(lst)):
         # print(labellist)
@@ -110,8 +113,9 @@ def is_valid_opcode(ins_l,linelist):
     d=[' ','add','sub','mov','ld','st','mul','div','rs','ls',
     'xor','or','and','not','cmp','jmp','jlt','jgt','je','hlt',
     'var']
-
+    # print(ins_l)
     for i in range(len(ins_l)):
+
         if (ins_l[i][0][-1]==":"):
             continue
         elif ins_l[i][0] not in d:
@@ -126,9 +130,10 @@ def error_len(ins_l,linelist):
     'not':3,'cmp':3,'jmp':2,'jlt':2,'jgt':2,'je':2,'hlt':1,'var':2}
 
     for i in range(len(ins_l)):
+        
         if (ins_l[i][0][-1]==":"):
             continue
-        if (len(ins_l[i])!=d[ins_l[i][0]]):
+        elif (len(ins_l[i])!=d[ins_l[i][0]]):
             # print(i)
             return -1,linelist[i]
     
@@ -215,9 +220,12 @@ def syntax_error(ins_l,linelist):
     d1=['ls','rs','ld','st']
 
     for i in range(len(ins_l)):
+        
+        
+
         if ins_l[i][0][-1]==":":
             continue
-        if ins_l[i][0]=='mov':
+        elif ins_l[i][0]=='mov':
             a=check_mov(ins_l[i][1:],linelist)
             if (a==-1):
                 return -1,linelist[i]
@@ -330,8 +338,10 @@ def input(L):
                 if split[0][-1]==":":
                     linelist.append(str(ctr))
                     ins_l.append([split[0]])
-                    linelist.append(str(ctr))
-                    ins_l.append(split[1:])
+                    if (len(split)>1):
+
+                        linelist.append(str(ctr))
+                        ins_l.append(split[1:])
                 else:
                     linelist.append(str(ctr))
                     ins_l.append(split)
@@ -339,16 +349,15 @@ def input(L):
         # print(ins_l)
         #print(ins_l)
         #print(linelist)
-    try:
-        x = (ErrorCheck(ins_l,linelist,extra))
+
+    x = (ErrorCheck(ins_l,linelist,extra))
             
-        if x ==  "No Errors":
+    if x ==  "No Errors":
                 return 1
-        else:
-                print (x)
-                return 0
-    except:
-            print("Something went wrong")
+    else:
+        print (x)
+        return 0
+    
 
 
 def add(e1,e2,e3):
@@ -591,7 +600,7 @@ if y :
                 pass
             if m[0][-1] == ":" :
                 m = m[1:]
-            if m == "":
+            if m == []:
                 flag = 0
                 pass
             elif m[0] == "add":
