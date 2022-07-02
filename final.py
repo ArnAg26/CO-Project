@@ -578,16 +578,20 @@ if y :
                 # print(m)
                 labels[m[0][0:-1]] = memory[counter - num_var]
                 # print(m[0][0:-1])
+    flag = 1
     for i in l:
         if i == "":
+            flag = 0
             pass
         else:
             m = [x for x in i.split()]
             if m[0] == "var":
+                flag = 0
                 pass
             if m[0][-1] == ":" :
                 m = m[1:]
             if m == "":
+                flag = 0
                 pass
             elif m[0] == "add":
                 ans = add(m[1],m[2],m[3])
@@ -632,4 +636,5 @@ if y :
                 ans = je(m[1])
             elif m[0] == "hlt":
                 ans = hlt()
+        if flag == 1:
             print(ans)
