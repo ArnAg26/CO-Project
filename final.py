@@ -578,8 +578,8 @@ if y :
                 # print(m)
                 labels[m[0][0:-1]] = memory[counter - num_var]
                 # print(m[0][0:-1])
-    flag = 1
     for i in l:
+        flag = 1
         if i == "":
             flag = 0
             pass
