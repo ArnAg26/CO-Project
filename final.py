@@ -1,3 +1,5 @@
+import sys
+
 def haltError(lst,linelist):
     if lst[-1]!=['hlt']:
         return 0,linelist[-1]
@@ -89,10 +91,15 @@ def IllegalFlag(lst,linelist):         #insl_l
         elif lst[i][0] in ["cmp","not","div"]:
             if lst[i][1]=="FLAGS" or lst[i][2]=="FLAGS":
                 return -1,linelist[i]
-        elif lst[i][0] in ["mov","ld","st","rs","ls"]:
+        elif lst[i][0] in ["ld","st","rs","ls"]:
             if lst[i][1]=="FLAGS":
                 return -1,linelist[i]
+        elif lst[i][0] in ["mov"]:
+            if lst[i][2]=="FLAGS" or (lst[i][2][0]=="$" and lst[i][1]=="FLAGS"):
+                return -1,linelist[i]
     return 1,0
+
+
 
 
 
@@ -310,13 +317,13 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
         return "Line "+y+" Illegal usage of flag"
     return "No Errors"
 def input():
-    with open("input.txt",'r') as f:
-        ins_l=[]
-        linelist=[]
-        extra=[]
-        ctr=1
+    L=sys.stdin.readlines()
+    ins_l=[]
+    linelist=[]
+    extra=[]
+    ctr=1
         # print(f.readlines())
-        for i in f.readlines():
+    for i in L:
             split=i.split()
             # print(i.split())
             extra.append(i.split())
@@ -333,15 +340,15 @@ def input():
         # print(ins_l)
         #print(ins_l)
         #print(linelist)
-        try:
-            x = (ErrorCheck(ins_l,linelist,extra))
+    try:
+        x = (ErrorCheck(ins_l,linelist,extra))
             
-            if x ==  "No Errors":
+        if x ==  "No Errors":
                 return 1
-            else:
+        else:
                 print (x)
                 return 0
-        except:
+    except:
             print("Something went wrong")
 
 
@@ -546,13 +553,11 @@ if y :
     for i in range(0,256,1) :
         x = str(bin(i))[2:]
         memory.append(x)
-    with open("input.txt","r") as f:
-        l = [ x for x in  f.read().split("\n")]
+    l=sys.stdin.readlines()
     # print(l)
     labels = {}
     variable = {}
     counter = -1
-    f = open("Output.txt","w")
     for i in l:
         counter += 1
         if i == "":
@@ -578,64 +583,45 @@ if y :
                 m = m[1:]
             if m[0] == "add":
                 ans = add(m[1],m[2],m[3])
-                f.write(ans + "\n")
             elif m[0] == "sub":
                 ans = sub(m[1],m[2],m[3])
-                f.write(ans + "\n")
             elif m[0] == "mov":
                 t = False
                 if m[2][0] == "$":
                     t = True
                 ans = mov(m[1],m[2],t)
-                f.write(ans + "\n")
             elif m[0] == "ld":
                 ans = ld(m[1],m[2])
-                f.write(ans + "\n")
             elif m[0] == "st":
                 ans = st(m[1],m[2])
                 #f.write("f")
-                f.write(ans + "\n")
             elif m[0] == "mul":
                 ans = mul(m[1],m[2],m[3])
-                f.write(ans + "\n")
             elif m[0] == "div":
                 ans = div(m[1],m[2])
-                f.write(ans + "\n")
             elif m[0] == "rs":
                 ans = rs(m[1],m[2])
-                f.write(ans + "\n")
             elif m[0] == "ls":
                 ans = ls(m[1],m[2])
-                f.write(ans + "\n")
             elif m[0] == "xor":
                 ans = xor(m[1],m[2],m[3])
-                f.write(ans + "\n")
             elif m[0] == "or":
                 ans = or1(m[1],m[2],m[3])
-                f.write(ans + "\n")
             elif m[0] == "and":
                 ans = and1(m[1],m[2],m[3])
-                f.write(ans + "\n")
             elif m[0] == "not":
                 ans = not1(m[1],m[2])
-                f.write(ans + "\n")
             elif m[0] == "cmp":
                 ans = cmp(m[1],m[2])
-                f.write(ans + "\n")
             elif m[0] == "jmp":
                 ans = jmp(m[1])
-                f.write(ans + "\n")
             elif m[0] == "jlt":
                 ans = jlt(m[1])
-                f.write(ans + "\n")
             elif m[0] == "jgt":
                 ans = jgt(m[1])
-                f.write(ans + "\n")
             elif m[0] == "je":
                 # print (labels.keys())
                 ans = je(m[1])
-                f.write(ans + "\n")
             elif m[0] == "hlt":
                 ans = hlt()
-                f.write(ans + "\n")
-    f.close()
+            print(ans)
