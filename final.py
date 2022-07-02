@@ -316,8 +316,7 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
     if z==-1:
         return "Line "+y+" Illegal usage of flag"
     return "No Errors"
-def input():
-    L=sys.stdin.readlines()
+def input(L):
     ins_l=[]
     linelist=[]
     extra=[]
@@ -524,7 +523,8 @@ def hlt():
     ans += "00000000000"
     return ans
 
-y =  input()
+l=sys.stdin.readlines()
+y =  input(l)
 if y :
     dic_r = {"R0" : "000","R1" : "001", "R2" : "010" , "R3" : "011" , "R4" : "100" , "R5" : "101" , "R6" :"110", "FLAGS" : "111"}
     dic_isa = {
@@ -553,11 +553,17 @@ if y :
     for i in range(0,256,1) :
         x = str(bin(i))[2:]
         memory.append(x)
-    l=sys.stdin.readlines()
     # print(l)
     labels = {}
     variable = {}
     counter = -1
+    num_var = 0
+    for i in l:
+        if i != "":
+            m = [x for x in i.split()]
+            if m[0] == "var":
+                num_var += 1
+    length = len(l) - num_var
     for i in l:
         counter += 1
         if i == "":
@@ -567,10 +573,10 @@ if y :
             # print(i.split())
             # print(m)
             if m[0] == "var" :
-                variable[m[1]] = memory[counter]   
+                variable[m[1]] = memory[counter + length]   
             if m[0][-1] == ":" :
                 # print(m)
-                labels[m[0][0:-1]] = memory[counter]
+                labels[m[0][0:-1]] = memory[counter - num_var]
                 # print(m[0][0:-1])
     for i in l:
         if i == "":
@@ -581,7 +587,9 @@ if y :
                 pass
             if m[0][-1] == ":" :
                 m = m[1:]
-            if m[0] == "add":
+            if m == "":
+                pass
+            elif m[0] == "add":
                 ans = add(m[1],m[2],m[3])
             elif m[0] == "sub":
                 ans = sub(m[1],m[2],m[3])
