@@ -580,6 +580,7 @@ if y :
                 # print(m[0][0:-1])
     for i in l:
         flag = 1
+        ans = ""
         if i == "":
             flag = 0
             pass
