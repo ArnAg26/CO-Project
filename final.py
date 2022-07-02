@@ -21,16 +21,30 @@ def VarList(lst,varlist,linelist):    #ins_l,[]
     return 1,0
 
 
-def Labellist(lst,labellist):   #ins_l,[]
+def Labellist(lst,labellist,linelist,extra):   #ins_l,[]
     i=0
+    for i in range(len(extra)):
+
+        ctr=[x for x in extra[i] if x[-1]==':']
+        if len(ctr)>1:
+            return -1,linelist[i]
+    # print(extra)
     for i in range(len(lst)):
+        # print(labellist)
         # if len(lst[i])>1 and lst[i][1][-1]==":":
         #     return -1
         if lst[i][0][-1]==":":
-            labellist.append(lst[i][0][:-1])
+            if lst[i][0][:-1] in labellist:
+                return -1,linelist[i]
+            else:
+                labellist.append(lst[i][0][:-1])
+    
+    
+    
+    # for i in range(len(extra)):
+    #     if extra[i]
     
     return 1,0
-            
 
 def UndefinedVariables(lst,varlist,labellist,linelist):  #ins_l, varlist, labellist
     for i in range(len(lst)):
@@ -244,9 +258,10 @@ def syntax_error(ins_l,linelist):
     # else:
     #     return -1
     
-def ErrorCheck(lst,linelist):        #ins_l
+def ErrorCheck(lst,linelist,extra):        #ins_l
     varlist=[]
     labellist=[]
+    # print(lst)
     z,y=is_valid_opcode(lst,linelist)
     if z==-1:
         return "Line "+y+" Invalid instruction used"
@@ -260,14 +275,16 @@ def ErrorCheck(lst,linelist):        #ins_l
     if z==1:
         pass
         #print(varlist)
+        
     else:
         return "Line "+y+" Variables not defined at start"
-    z,y=Labellist(lst,labellist)
+    z,y=Labellist(lst,labellist,linelist,extra)
     if z==1:
         # print(labellist)
         pass
-    else:
-        return "Line "+y+" Space between label and colon"
+    elif (z==-1):
+        return "Line "+y+" Invalid use of labels"
+
     z,y=ImmediateError(lst,linelist)
     if z==0:
         return "Line "+y+" $ does not preceed immediate value"
@@ -296,9 +313,13 @@ def input():
     with open("input.txt",'r') as f:
         ins_l=[]
         linelist=[]
+        extra=[]
         ctr=1
+        # print(f.readlines())
         for i in f.readlines():
             split=i.split()
+            # print(i.split())
+            extra.append(i.split())
             if (split!=[]):
                 if split[0][-1]==":":
                     linelist.append(str(ctr))
@@ -309,16 +330,19 @@ def input():
                     linelist.append(str(ctr))
                     ins_l.append(split)
             ctr+=1
-        
+        # print(ins_l)
         #print(ins_l)
         #print(linelist)
-        
-        x = (ErrorCheck(ins_l,linelist))
-        if x ==  "No Errors":
-            return 1
-        else:
-            print (x)
-            return 0
+        try:
+            x = (ErrorCheck(ins_l,linelist,extra))
+            
+            if x ==  "No Errors":
+                return 1
+            else:
+                print (x)
+                return 0
+        except:
+            print("Something went wrong")
 
 
 def add(e1,e2,e3):
@@ -524,7 +548,7 @@ if y :
         memory.append(x)
     with open("input.txt","r") as f:
         l = [ x for x in  f.read().split("\n")]
-    #print(l)
+    # print(l)
     labels = {}
     variable = {}
     counter = -1
@@ -535,7 +559,8 @@ if y :
             pass
         else:
             m = [x for x in i.split()]
-            #print(m)
+            # print(i.split())
+            # print(m)
             if m[0] == "var" :
                 variable[m[1]] = memory[counter]   
             if m[0][-1] == ":" :
