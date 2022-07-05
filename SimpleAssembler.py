@@ -568,14 +568,14 @@ if y :
     counter = -1
     num_var = 0
     for i in l:
-        if i != "":
+        if i != "\n":
             m = [x for x in i.split()]
             if m[0] == "var":
                 num_var += 1
     length = len(l) - num_var
     for i in l:
         counter += 1
-        if i == "":
+        if i == "\n":
             pass
         else:
             m = [x for x in i.split()]
@@ -590,7 +590,7 @@ if y :
     for i in l:
         flag = 1
         ans = ""
-        if i == "":
+        if i == "\n":
             flag = 0
             pass
         else:
