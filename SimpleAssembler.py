@@ -325,9 +325,6 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
         return "Line "+y+" Illegal usage of flag"
     return "No Errors"
 def input(L):
-    ins_l=[]
-    linelist=[]
-    extra=[]
     ctr=1
         # print(f.readlines())
     for i in L:
@@ -533,6 +530,9 @@ def hlt():
     return ans
 
 l=sys.stdin.readlines()
+ins_l = []
+linelist=[]
+extra=[]
 y =  input(l)
 if y :
     dic_r = {"R0" : "000","R1" : "001", "R2" : "010" , "R3" : "011" , "R4" : "100" , "R5" : "101" , "R6" :"110", "FLAGS" : "111"}
@@ -562,21 +562,27 @@ if y :
     for i in range(0,256,1) :
         x = str(bin(i))[2:]
         memory.append(x)
-    # print(l)
+    # print(ins_l)
     labels = {}
     variable = {}
     counter = -1
     num_var = 0
+    empty = 0
     for i in l:
         if i != "\n":
             m = [x for x in i.split()]
             if m[0] == "var":
                 num_var += 1
-    length = len(l) - num_var
+        else:
+            empty += 1
+    length = len(l) - num_var -empty
     for i in l:
         counter += 1
+        # print(counter,"\n")
         if i == "\n":
-            counter -= 1
+            # counter -= 1
+            # print(counter,"\n")
+            pass
         else:
             m = [x for x in i.split()]
             # print(i.split())
