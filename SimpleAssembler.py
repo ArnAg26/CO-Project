@@ -576,7 +576,7 @@ if y :
     for i in l:
         counter += 1
         if i == "\n":
-            pass
+            counter -= 1
         else:
             m = [x for x in i.split()]
             # print(i.split())
