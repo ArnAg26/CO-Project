@@ -77,19 +77,25 @@ def UndefinedLabels(lst,varlist,labellist,linelist):     #ins_l,varlist,labellis
 def ImmediateError(lst,linelist):             #insl_l
     for i in range(len(lst)):
         if lst[i][0]=="mov" and lst[i][2][0]=="$":
-            if int(lst[i][2][1:])<0 or int(lst[i][2][1:])>255:
+            if "." in lst[i][2][1:]:
+                return -2,linelist[i]
+            elif int(lst[i][2][1:])<0 or int(lst[i][2][1:])>255:
                 return -1,linelist[i]
         elif lst[i][0] in ["ls","rs"]:
             if lst[i][2][0]!="$":
                 return 0,linelist[i]
+            elif "." in lst[i][2][1:]:
+                return -2,linelist[i]
             elif int(lst[i][2][1:])<0 or int(lst[i][2][1:])>255:
                 return -1,linelist[i]
     return 1,0
 
-def IllegalFlag(lst,linelist):         #insl_l
+def IllegalFlag(lst,linelist):
     for i in range(len(lst)):
         if lst[i][0] in ["add","sub","mul","xor","or","and"]:
-            if lst[i][1]=="FLAGS" or lst[i][2]=="FLAGS" or lst[i][3]=="FLAGS:":
+            # print(lst[i])
+            if lst[i][1]=="FLAGS" or lst[i][2]=="FLAGS" or lst[i][3]=="FLAGS":
+                # print(lst[i][0])
                 return -1,linelist[i]
         elif lst[i][0] in ["cmp","not","div"]:
             if lst[i][1]=="FLAGS" or lst[i][2]=="FLAGS":
@@ -277,6 +283,11 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
     varlist=[]
     labellist=[]
     # print(lst)
+    z,y=haltError(lst,linelist)
+    if z==-1:
+        return "Line "+y+" Halt used before last instruction"
+    if z==0:
+        return "Line "+y+" Halt not used to terminate program"
     z,y=is_valid_opcode(lst,linelist)
     if z==-1:
         return "Line "+y+" Invalid instruction used"
@@ -305,6 +316,8 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
         return "Line "+y+" $ does not preceed immediate value"
     if z==-1:
         return "Line "+y+" Immediate given out of range"
+    if z==-2:
+        return "Line "+y+" Immediate cannot be floating point number"
     z,y=UndefinedVariables(lst,varlist,labellist,linelist)
     if z==-1:
         return "Line "+y+" Undefined Variable"
@@ -315,11 +328,6 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
         return "Line "+y+" Undefined Label"
     if z==0:
         return "Line "+y+" Misuse of variable as label"
-    z,y=haltError(lst,linelist)
-    if z==-1:
-        return "Line "+y+" Halt used before last instruction"
-    if z==0:
-        return "Line "+y+" Halt not used to terminate program"
     z,y=IllegalFlag(lst,linelist)
     if z==-1:
         return "Line "+y+" Illegal usage of flag"
@@ -329,8 +337,9 @@ def input(L):
         # print(f.readlines())
     for i in L:
             split=i.split()
-            # print(i.split())
             extra.append(i.split())
+            #print(split)
+            
             if (split!=[]):
                 if split[0][-1]==":":
                     linelist.append(str(ctr))
@@ -343,10 +352,12 @@ def input(L):
                     linelist.append(str(ctr))
                     ins_l.append(split)
             ctr+=1
-        # print(ins_l)
-        #print(ins_l)
-        #print(linelist)
-
+    # print(ins_l)
+    #print(linelist)
+    if len(ins_l)==0:
+        print("Line",len(L),"Halt Instruction missing")
+        return 0
+    #print(linelist)
     x = (ErrorCheck(ins_l,linelist,extra))
             
     if x ==  "No Errors":
@@ -530,6 +541,8 @@ def hlt():
     return ans
 
 l=sys.stdin.readlines()
+
+
 ins_l = []
 linelist=[]
 extra=[]
