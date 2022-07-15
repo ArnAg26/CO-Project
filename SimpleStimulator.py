@@ -4,7 +4,7 @@
 def toBinary(deci):
 
     st=""
-    for i in range(8):
+    for i in range(16):
         st=st+str(deci%2)
         deci=deci//2
     
@@ -98,6 +98,83 @@ def NOT(r1,r2,pc):
 
     return pc
 
+def add(r1,r2,r3,pc):
+    q = reg_dic[r1]
+    r = reg_dic[r2]
+    p = reg_dic[r3]
+    p = q + r
+    if p > 2**16 -1:
+        reg_dic["111"][-4] = '1'
+        reg_dic[r3] = p % (2**16)
+    else:
+        reg_dic[r3] = p
+    pc += 1
+    return pc
+
+def sub(r1,r2,r3,pc):
+    p = reg_dic[r1]
+    q = reg_dic[r2]
+    r = reg_dic[r3]
+    r = p - q
+    if r < 0:
+        reg_dic["111"][-4] = '1'
+        reg_dic[r3] = 0
+    else:
+        reg_dic[r3] = r
+    pc += 1
+    return pc
+
+def mul(r1,r2,r3,pc):
+    q = reg_dic[r1]
+    p = reg_dic[r2]
+    r = reg_dic[r3]
+    r = q * p
+    if r > 2**16 -1:
+        reg_dic["111"][-4] = '1'
+        reg_dic[r3] = r % (2**16)
+    else:
+        reg_dic[r3] = r
+    pc += 1
+    return pc
+
+def div(r1,r2,pc):
+    p = reg_dic[r1]
+    q = reg_dic[r2]
+    if q != 0:
+        quo = int(p/q)
+        rem = p - quo*q
+        reg_dic["000"] = quo
+        reg_dic["001"] = rem
+    pc += 1
+    return pc
+
+def movim(r1,imm,pc):
+    ans = toDecimal(imm)
+    reg_dic[r1] = ans
+    pc += 1
+    return pc
+    
+def movre(r1,r2,pc):
+    if r1 == "111":
+        ans = toBinary(reg_dic[r2])
+        reg_dic["111"][-4:] = ans[-4:]
+    else:
+        reg_dic[r2] = reg_dic[r1]
+    pc += 1
+    return pc
+
+def CMP(r1,r2,pc):
+    p = reg_dic[r1]
+    q = reg_dic[r2]
+    if (p>q):
+        reg_dic["111"][-2] = '1'
+    elif (p<q):
+        reg_dic["111"][-3] = '1'
+    else:
+        reg_dic["111"][-1] = '1'
+    pc += 1
+    return pc
+
 
 def Execution_unit(string,pc):
     opcode = string[0:5]
@@ -183,4 +260,6 @@ def Execution_unit(string,pc):
         pc = 256
     return pc
 
-reg_dic={'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':'0'}
+reg_dic={'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':'0000000000000000'}
+label_dic = {}
+variable_dic = {}
