@@ -1,5 +1,6 @@
 #common file for qs 2
-
+import sys
+from pip import main
 
 def toBinary(deci):
 
@@ -31,7 +32,7 @@ def ls(reg, imm,pc):
 
     ls=reg_dic[reg]<<imm_in_deci
 
-    reg_dic[reg]=ls
+    reg_dic[reg]=ls%(2**16)
 
     pc+=1
 
@@ -46,7 +47,7 @@ def rs(reg, imm ,pc):
 
     rs=reg_dic[reg]>>imm_in_deci
 
-    reg_dic[reg]=rs
+    reg_dic[reg]=rs%(2**16)
 
     pc+=1
 
@@ -56,7 +57,7 @@ def rs(reg, imm ,pc):
 def AND(r1,r2,r3,pc):
 
     #r1&r2=r3
-    reg_dic[r3]=reg_dic[r1]&reg_dic[r2]
+    reg_dic[r3]=(reg_dic[r1]&reg_dic[r2])%(2**16)
 
     pc+=1
 
@@ -68,7 +69,7 @@ def OR(r1,r2,r3,pc):
 
     
 
-    reg_dic[r3]=reg_dic[r1]|reg_dic[r2]
+    reg_dic[r3]=(reg_dic[r1]|reg_dic[r2])%(2**16)
 
     pc+=1
 
@@ -79,7 +80,7 @@ def XOR(r1,r2,r3,pc):
 
     
 
-    reg_dic[r3]=reg_dic[r1]^reg_dic[r2]
+    reg_dic[r3]=(reg_dic[r1]^reg_dic[r2])%(2**16)
 
     pc+=1
 
@@ -92,7 +93,7 @@ def NOT(r1,r2,pc):
 
     
 
-    reg_dic[r2]=~reg_dic[r1]
+    reg_dic[r2]=(~reg_dic[r1])%(2**16)
 
     pc+=1
 
@@ -263,3 +264,27 @@ def Execution_unit(string,pc):
 reg_dic={'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':'0000000000000000'}
 label_dic = {}
 variable_dic = {}
+if __name__== "__main__":
+
+    pc=0
+
+    while (1):
+        ans = toBinary(pc)
+        ans = ans[8:]
+        print(ans,end=" ")
+
+        pc=Execution_unit(x[pc],pc)
+
+        print(toBinary(reg_dic['000']),end=" ")
+        print(toBinary(reg_dic['001']),end=" ")
+        print(toBinary(reg_dic['010']),end=" ")
+        print(toBinary(reg_dic['011']),end=" ")
+        print(toBinary(reg_dic['100']),end=" ")
+        print(toBinary(reg_dic['101']),end=" ")
+        print(toBinary(reg_dic['110']),end=" ")
+        print(toBinary(reg_dic['111']),end=" ")
+        print("\n")
+
+
+        if pc==256:
+            break
