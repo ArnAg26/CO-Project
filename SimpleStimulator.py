@@ -6,7 +6,8 @@ def toBinary(deci):
 
     st=""
     for i in range(16):
-        st=st+str(deci%2)
+        d=deci%2
+        st=st+str(d)
         deci=deci//2
     
     return st[::-1]
@@ -338,7 +339,7 @@ if __name__== "__main__":
         print(toBinary(reg_dic['100']),end=" ")
         print(toBinary(reg_dic['101']),end=" ")
         print(toBinary(reg_dic['110']),end=" ")
-        print(toBinary(reg_dic['111']),end=" ")
+        print(reg_dic['111'])
         print("\n")
 
 
