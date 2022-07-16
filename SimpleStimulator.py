@@ -11,12 +11,7 @@ def toBinary(deci):
     
     return st[::-1]
 
-def toDecimal(str):
-    dec=0
-    n=len(str)
-    for i in range(n):
-        dec+=int(str[::-1][i])*2**i
-    return dec
+
         
 
 def toDecimal(imm):
@@ -60,25 +55,24 @@ def rs(reg, imm ,pc):
     return pc
 
 def jmp(mem_add,pc):
-    pc=mem_add
-    pc=toBinary(pc)
+    pc=toDecimal(mem_add)
     return pc
     
 def jlt(mem_add,pc):
     if reg_dic['111'][13]=='1':
-        pc=toBinary(mem_add)
+        pc=toDecimal(mem_add)
         return pc
     return pc+1
 
 def jgt(mem_add,pc):
     if reg_dic['111'][14]=='1':
-        pc=toBinary(mem_add)
+        pc=toDecimal(mem_add)
         return pc
     return pc+1
 
 def je(mem_add,pc):
     if reg_dic['111'][15]=='1':
-        pc=toBinary(mem_add)
+        pc=toDecimal(mem_add)
         return pc
     return pc+1
 
@@ -130,17 +124,17 @@ def NOT(r1,r2,pc):
     return pc
 
 def ld(r1,mem_add,pc):
-    a=toDecimal(mem[mem_add])
+    a=toDecimal(mem[toDecimal(mem_add)])
     reg_dic[r1]=a
     pc+=1
-    variable_dic[mem_add]=a
+    variable_dic[toDecimal(mem_add)]=a
     return pc
 
     
     
 def store(r1,mem_add,pc):
     a=toBinary(reg_dic[r1])
-    mem[mem_add]=a
+    mem[toDecimal(mem_add)]=a
     pc+=1
     return pc
     
