@@ -340,7 +340,7 @@ if __name__== "__main__":
         print(toBinary(reg_dic['101']),end=" ")
         print(toBinary(reg_dic['110']),end=" ")
         print(reg_dic['111'])
-        print("\n")
+       
 
 
         if pc==256:
