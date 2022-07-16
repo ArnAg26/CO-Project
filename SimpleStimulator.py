@@ -11,7 +11,13 @@ def toBinary(deci):
     
     return st[::-1]
 
-
+def toDecimal(str):
+    dec=0
+    n=len(str)
+    for i in range(n):
+        dec+=int(str[::-1][i])*2**i
+    return dec
+        
 
 def toDecimal(imm):
 
@@ -52,6 +58,30 @@ def rs(reg, imm ,pc):
     pc+=1
 
     return pc
+
+def jmp(mem_add,pc):
+    pc=mem_add
+    pc=toBinary(pc)
+    return pc
+    
+def jlt(mem_add,pc):
+    if reg_dic['111'][13]=='1':
+        pc=toBinary(mem_add)
+        return pc
+    return pc+1
+
+def jgt(mem_add,pc):
+    if reg_dic['111'][14]=='1':
+        pc=toBinary(mem_add)
+        return pc
+    return pc+1
+
+def je(mem_add,pc):
+    if reg_dic['111'][15]=='1':
+        pc=toBinary(mem_add)
+        return pc
+    return pc+1
+
 
 
 def AND(r1,r2,r3,pc):
@@ -98,6 +128,23 @@ def NOT(r1,r2,pc):
     pc+=1
 
     return pc
+
+def ld(r1,mem_add,pc):
+    a=toDecimal(mem[mem_add])
+    reg_dic[r1]=a
+    pc+=1
+    variable_dic[mem_add]=a
+    return pc
+
+    
+    
+def store(r1,mem_add,pc):
+    a=toBinary(reg_dic[r1])
+    mem[mem_add]=a
+    pc+=1
+    return pc
+    
+    
 
 def add(r1,r2,r3,pc):
     q = reg_dic[r1]
@@ -247,26 +294,30 @@ def Execution_unit(string,pc):
         pc = CMP(r1,r2,pc)
     elif opcode == "11111":           #16
         mem_add = string[8:]
-        pc = JMP(mem_add,pc)
+        pc = jmp(mem_add,pc)
     elif opcode == "01100":           #17
         mem_add = string[8:]
-        pc = JLT(mem_add,pc)
+        pc = jlt(mem_add,pc)
     elif opcode == "01101":           #18
         mem_add = string[8:]
-        pc = JGT(mem_add,pc)
+        pc = jgt(mem_add,pc)
     elif opcode == "01111":           #19
         mem_add = string[8:]
-        pc = JE(mem_add,pc)
+        pc = je(mem_add,pc)
     elif opcode == "01010":          #20
         pc = 256
     return pc
 
 l=sys.stdin.readlines()
-x=[]
+mem=[]
 for i in l:
     if i=='\n':
         continue
-    x.append(i.strip("\n"))
+    mem.append(i.strip("\n"))
+n=len(mem)
+
+for i in range(n,256):
+    mem.append('0000000000000000')
 
 
 
@@ -284,7 +335,7 @@ if __name__== "__main__":
         ans = ans[8:]
         print(ans,end=" ")
 
-        pc=Execution_unit(x[pc],pc)
+        pc=Execution_unit(mem[pc],pc)
 
         print(toBinary(reg_dic['000']),end=" ")
         print(toBinary(reg_dic['001']),end=" ")
@@ -299,3 +350,5 @@ if __name__== "__main__":
 
         if pc==256:
             break
+    for i in mem:
+        print(i)
