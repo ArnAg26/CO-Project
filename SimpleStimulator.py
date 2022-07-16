@@ -261,6 +261,17 @@ def Execution_unit(string,pc):
         pc = 256
     return pc
 
+l=sys.stdin.readlines()
+x=[]
+for i in l:
+    if i=='\n':
+        continue
+    x.append(i.strip("\n"))
+
+
+
+
+
 reg_dic={'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':'0000000000000000'}
 label_dic = {}
 variable_dic = {}
