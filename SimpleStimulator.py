@@ -6,8 +6,7 @@ def toBinary(deci):
 
     st=""
     for i in range(16):
-        d=deci%2
-        st=st+str(d)
+        st=st+str(deci%2)
         deci=deci//2
     
     return st[::-1]
@@ -35,6 +34,12 @@ def ls(reg, imm,pc):
     ls=reg_dic[reg]<<imm_in_deci
 
     reg_dic[reg]=ls%(2**16)
+    if ls > 2**16 - 1:
+        a = reg_dic["111"][0:-4]
+        a += "1"
+        b = reg_dic["111"][-3:]
+        a += b
+        reg_dic["111"] = a
 
     pc+=1
 
@@ -50,6 +55,12 @@ def rs(reg, imm ,pc):
     rs=reg_dic[reg]>>imm_in_deci
 
     reg_dic[reg]=rs%(2**16)
+    if rs > 2**16 -1:
+        a = reg_dic["111"][0:-4]
+        a += "1"
+        b = reg_dic["111"][-3:]
+        a += b
+        reg_dic["111"] = a
 
     pc+=1
 
@@ -147,7 +158,11 @@ def add(r1,r2,r3,pc):
     p = reg_dic[r3]
     p = q + r
     if p > 2**16 -1:
-        reg_dic["111"][-4] = '1'
+        a = reg_dic["111"][0:-4]
+        a += "1"
+        b = reg_dic["111"][-3:]
+        a += b
+        reg_dic["111"] = a
         reg_dic[r3] = p % (2**16)
     else:
         reg_dic[r3] = p
@@ -160,7 +175,11 @@ def sub(r1,r2,r3,pc):
     r = reg_dic[r3]
     r = p - q
     if r < 0:
-        reg_dic["111"][-4] = '1'
+        a = reg_dic["111"][0:-4]
+        a += "1"
+        b = reg_dic["111"][-3:]
+        a += b
+        reg_dic["111"] = a
         reg_dic[r3] = 0
     else:
         reg_dic[r3] = r
@@ -172,8 +191,13 @@ def mul(r1,r2,r3,pc):
     p = reg_dic[r2]
     r = reg_dic[r3]
     r = q * p
+    #print (reg_dic[r2],reg_dic[r1],r)
     if r > 2**16 -1:
-        reg_dic["111"][-4] = '1'
+        a = reg_dic["111"][0:-4]
+        a += "1"
+        b = reg_dic["111"][-3:]
+        a += b
+        reg_dic["111"] = a
         reg_dic[r3] = r % (2**16)
     else:
         reg_dic[r3] = r
@@ -199,8 +223,8 @@ def movim(r1,imm,pc):
     
 def movre(r1,r2,pc):
     if r1 == "111":
-        ans = toBinary(reg_dic[r2])
-        reg_dic["111"][-4:] = ans[-4:]
+        ans = toDecimal(reg_dic["111"])
+        reg_dic[r2] = ans
     else:
         reg_dic[r2] = reg_dic[r1]
     pc += 1
@@ -210,11 +234,21 @@ def CMP(r1,r2,pc):
     p = reg_dic[r1]
     q = reg_dic[r2]
     if (p>q):
-        reg_dic["111"][-2] = '1'
+        a = reg_dic["111"][0:-2]
+        a += "1"
+        b = reg_dic["111"][-1:]
+        a += b
+        reg_dic["111"] = a
     elif (p<q):
-        reg_dic["111"][-3] = '1'
+        a = reg_dic["111"][0:-3]
+        a += "1"
+        b = reg_dic["111"][-2:]
+        a += b
+        reg_dic["111"] = a
     else:
-        reg_dic["111"][-1] = '1'
+        a = reg_dic["111"][0:-1]
+        a += "1"
+        reg_dic["111"] = a
     pc += 1
     return pc
 
@@ -339,11 +373,11 @@ if __name__== "__main__":
         print(toBinary(reg_dic['100']),end=" ")
         print(toBinary(reg_dic['101']),end=" ")
         print(toBinary(reg_dic['110']),end=" ")
-        print(reg_dic['111'])
-       
+        print(toBinary(reg_dic['111']),end=" ")
 
 
         if pc==256:
             break
     for i in mem:
+        print(i)
         print(i)
