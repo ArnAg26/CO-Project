@@ -578,19 +578,23 @@ if y :
     # print(ins_l)
     labels = {}
     variable = {}
-    counter = -1
+    counter = 0
     num_var = 0
     empty = 0
     for i in l:
         if i != "\n":
             m = [x for x in i.split()]
-            if m[0] == "var":
-                num_var += 1
+            if m[0][-1] == ":":
+                m = m[1:]
+            if m != []:
+                if m[0] == "var":
+                    num_var += 1
+            else:
+                empty += 1
         else:
             empty += 1
     length = len(l) - num_var -empty
     for i in l:
-        counter += 1
         # print(counter,"\n")
         if i == "\n":
             # counter -= 1
@@ -606,6 +610,9 @@ if y :
                 # print(m)
                 labels[m[0][0:-1]] = memory[counter - num_var]
                 # print(m[0][0:-1])
+                m = m[1:]
+            if m != []:
+                counter += 1
     for i in l:
         flag = 1
         ans = ""
