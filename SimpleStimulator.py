@@ -256,16 +256,35 @@ def CMP(r1,r2,pc):
         b = reg_dic["111"][-1:]
         a += b
         reg_dic["111"] = a
-    elif (p<q):
+    else:
+        a = reg_dic["111"][0:-2]
+        a += "0"
+        b = reg_dic["111"][-1:]
+        a += b
+        reg_dic["111"] = a
+    if (p<q):
         a = reg_dic["111"][0:-3]
         a += "1"
         b = reg_dic["111"][-2:]
         a += b
         reg_dic["111"] = a
+        
     else:
+        a = reg_dic["111"][0:-3]
+        a += "0"
+        b = reg_dic["111"][-2:]
+        a += b
+        reg_dic["111"] = a
+        
+    if(p==q):
         a = reg_dic["111"][0:-1]
         a += "1"
         reg_dic["111"] = a
+    else:
+        a = reg_dic["111"][0:-1]
+        a += "0"
+        reg_dic["111"] = a
+        
     pc += 1
     return pc
 
