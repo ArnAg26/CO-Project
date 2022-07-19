@@ -166,6 +166,11 @@ def add(r1,r2,r3,pc):
         reg_dic[r3] = p % (2**16)
     else:
         reg_dic[r3] = p
+        a = reg_dic["111"][0:-4]
+        a += "0"
+        b = reg_dic["111"][-3:]
+        a += b
+        reg_dic["111"] = a
     pc += 1
     return pc
 
@@ -183,6 +188,12 @@ def sub(r1,r2,r3,pc):
         reg_dic[r3] = 0
     else:
         reg_dic[r3] = r
+        a = reg_dic["111"][0:-4]
+        a += "0"
+        b = reg_dic["111"][-3:]
+        a += b
+        reg_dic["111"] = a
+        reg_dic[r3] = 0
     pc += 1
     return pc
 
@@ -201,6 +212,12 @@ def mul(r1,r2,r3,pc):
         reg_dic[r3] = r % (2**16)
     else:
         reg_dic[r3] = r
+        a = reg_dic["111"][0:-4]
+        a += "0"
+        b = reg_dic["111"][-3:]
+        a += b
+        reg_dic["111"] = a
+        reg_dic[r3] = 0
     pc += 1
     return pc
 
@@ -373,11 +390,10 @@ if __name__== "__main__":
         print(toBinary(reg_dic['100']),end=" ")
         print(toBinary(reg_dic['101']),end=" ")
         print(toBinary(reg_dic['110']),end=" ")
-        print(toBinary(reg_dic['111']),end=" ")
+        print(reg_dic['111'])
 
 
         if pc==256:
             break
     for i in mem:
-        print(i)
         print(i)
