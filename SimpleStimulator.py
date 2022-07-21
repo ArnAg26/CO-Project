@@ -36,9 +36,11 @@ def ls(reg, imm,pc):
     reg_dic[reg]=ls%(2**16)
     if ls > 2**16 - 1:
         a = reg_dic["111"][0:-4]
-        a += "1"
-        b = reg_dic["111"][-3:]
-        a += b
+        a += "1000"
+        reg_dic["111"] = a
+    else:
+        a = reg_dic["111"][0:-4]
+        a += "0000"
         reg_dic["111"] = a
 
     pc+=1
@@ -55,11 +57,13 @@ def rs(reg, imm ,pc):
     rs=reg_dic[reg]>>imm_in_deci
 
     reg_dic[reg]=rs%(2**16)
-    if rs > 2**16 -1:
+    if rs > 2**16 - 1:
         a = reg_dic["111"][0:-4]
-        a += "1"
-        b = reg_dic["111"][-3:]
-        a += b
+        a += "1000"
+        reg_dic["111"] = a
+    else:
+        a = reg_dic["111"][0:-4]
+        a += "0000"
         reg_dic["111"] = a
 
     pc+=1
@@ -68,24 +72,36 @@ def rs(reg, imm ,pc):
 
 def jmp(mem_add,pc):
     pc=toDecimal(mem_add)
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     return pc
     
 def jlt(mem_add,pc):
     if reg_dic['111'][13]=='1':
         pc=toDecimal(mem_add)
-        return pc
+        #return pc
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     return pc+1
 
 def jgt(mem_add,pc):
     if reg_dic['111'][14]=='1':
         pc=toDecimal(mem_add)
-        return pc
+        #return pc
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     return pc+1
 
 def je(mem_add,pc):
     if reg_dic['111'][15]=='1':
         pc=toDecimal(mem_add)
-        return pc
+        #return pc
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     return pc+1
 
 
@@ -94,7 +110,9 @@ def AND(r1,r2,r3,pc):
 
     #r1&r2=r3
     reg_dic[r3]=(reg_dic[r1]&reg_dic[r2])%(2**16)
-
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     pc+=1
 
     return pc
@@ -106,7 +124,9 @@ def OR(r1,r2,r3,pc):
     
 
     reg_dic[r3]=(reg_dic[r1]|reg_dic[r2])%(2**16)
-
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     pc+=1
 
     return pc
@@ -117,7 +137,9 @@ def XOR(r1,r2,r3,pc):
     
 
     reg_dic[r3]=(reg_dic[r1]^reg_dic[r2])%(2**16)
-
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     pc+=1
 
     return pc
@@ -130,7 +152,9 @@ def NOT(r1,r2,pc):
     
 
     reg_dic[r2]=(~reg_dic[r1])%(2**16)
-
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     pc+=1
 
     return pc
@@ -140,6 +164,9 @@ def ld(r1,mem_add,pc):
     reg_dic[r1]=a
     pc+=1
     variable_dic[toDecimal(mem_add)]=a
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     return pc
 
     
@@ -147,6 +174,9 @@ def ld(r1,mem_add,pc):
 def store(r1,mem_add,pc):
     a=toBinary(reg_dic[r1])
     mem[toDecimal(mem_add)]=a
+    a = reg_dic["111"][0:-4]
+    a += "0000"
+    reg_dic["111"] = a
     pc+=1
     return pc
     
@@ -159,17 +189,13 @@ def add(r1,r2,r3,pc):
     p = q + r
     if p > 2**16 -1:
         a = reg_dic["111"][0:-4]
-        a += "1"
-        b = reg_dic["111"][-3:]
-        a += b
+        a += "1000"
         reg_dic["111"] = a
         reg_dic[r3] = p % (2**16)
     else:
         reg_dic[r3] = p
         a = reg_dic["111"][0:-4]
-        a += "0"
-        b = reg_dic["111"][-3:]
-        a += b
+        a += "0000"
         reg_dic["111"] = a
     pc += 1
     return pc
@@ -181,17 +207,13 @@ def sub(r1,r2,r3,pc):
     r = p - q
     if r < 0:
         a = reg_dic["111"][0:-4]
-        a += "1"
-        b = reg_dic["111"][-3:]
-        a += b
+        a += "1000"
         reg_dic["111"] = a
         reg_dic[r3] = 0
     else:
         reg_dic[r3] = r
         a = reg_dic["111"][0:-4]
-        a += "0"
-        b = reg_dic["111"][-3:]
-        a += b
+        a += "0000"
         reg_dic["111"] = a
         reg_dic[r3] = 0
     pc += 1
@@ -205,17 +227,13 @@ def mul(r1,r2,r3,pc):
     #print (reg_dic[r2],reg_dic[r1],r)
     if r > 2**16 -1:
         a = reg_dic["111"][0:-4]
-        a += "1"
-        b = reg_dic["111"][-3:]
-        a += b
+        a += "1000"
         reg_dic["111"] = a
         reg_dic[r3] = r % (2**16)
     else:
         reg_dic[r3] = r
         a = reg_dic["111"][0:-4]
-        a += "0"
-        b = reg_dic["111"][-3:]
-        a += b
+        a += "0000"
         reg_dic["111"] = a
         reg_dic[r3] = 0
     pc += 1
@@ -230,12 +248,16 @@ def div(r1,r2,pc):
         reg_dic["000"] = quo
         reg_dic["001"] = rem
     pc += 1
+    a = reg_dic["111"][0:-4]
+    a += "0000"
     return pc
 
 def movim(r1,imm,pc):
     ans = toDecimal(imm)
     reg_dic[r1] = ans
     pc += 1
+    a = reg_dic["111"][0:-4]
+    a += "0000"
     return pc
     
 def movre(r1,r2,pc):
@@ -245,46 +267,25 @@ def movre(r1,r2,pc):
     else:
         reg_dic[r2] = reg_dic[r1]
     pc += 1
+    a = reg_dic["111"][0:-4]
+    a += "0000"
     return pc
 
 def CMP(r1,r2,pc):
     p = reg_dic[r1]
     q = reg_dic[r2]
     if (p>q):
-        a = reg_dic["111"][0:-2]
-        a += "1"
-        b = reg_dic["111"][-1:]
-        a += b
-        reg_dic["111"] = a
-    else:
-        a = reg_dic["111"][0:-2]
-        a += "0"
-        b = reg_dic["111"][-1:]
-        a += b
+        a = reg_dic["111"][0:-4]
+        a += "0010"
         reg_dic["111"] = a
     if (p<q):
-        a = reg_dic["111"][0:-3]
-        a += "1"
-        b = reg_dic["111"][-2:]
-        a += b
-        reg_dic["111"] = a
-        
-    else:
-        a = reg_dic["111"][0:-3]
-        a += "0"
-        b = reg_dic["111"][-2:]
-        a += b
-        reg_dic["111"] = a
-        
+        a = reg_dic["111"][0:-4]
+        a += "0100"
+        reg_dic["111"] = a      
     if(p==q):
-        a = reg_dic["111"][0:-1]
-        a += "1"
-        reg_dic["111"] = a
-    else:
-        a = reg_dic["111"][0:-1]
-        a += "0"
-        reg_dic["111"] = a
-        
+        a = reg_dic["111"][0:-4]
+        a += "0001"
+        reg_dic["111"] = a      
     pc += 1
     return pc
 
