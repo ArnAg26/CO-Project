@@ -151,10 +151,25 @@ def NOT(r1,r2,pc):
 
     
 
-    reg_dic[r2]=(~reg_dic[r1])%(2**16)
-    a = reg_dic["111"][0:-4]
-    a += "0000"
-    reg_dic["111"] = a
+    # reg_dic[r2]=(~reg_dic[r1])%(2**16)
+    # a = reg_dic["111"][0:-4]
+    # a += "0000"
+    # reg_dic["111"] = a
+    # pc+=1
+
+    x=toBinary(reg_dic[r1])
+    st=""
+    for i in x:
+        if (i=='0'):
+            st+="1"
+        else:
+            st+="0"
+
+    z=toDecimal(st)
+    # print(z)
+    reg_dic[r2]=z%(2**16)
+
+    #st --> not of the given value in binary
     pc+=1
 
     return pc
@@ -411,6 +426,8 @@ if __name__== "__main__":
         print(toBinary(reg_dic['101']),end=" ")
         print(toBinary(reg_dic['110']),end=" ")
         print(reg_dic['111'])
+
+        # print(reg_dic)
 
 
         if pc==256:
