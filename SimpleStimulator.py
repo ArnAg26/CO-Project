@@ -1,6 +1,8 @@
 #common file for qs 2
 import sys
-from pip import main
+import matplotlib.pyplot as plt
+
+
 
 def toBinary(deci):
 
@@ -548,9 +550,13 @@ pc=0
 
 cycle=1
 
+x_axis=[]
+y_axis=[]
+
+
 while (1):
-    x_axis=[]
-    y_axis=[]
+    # x_axis=[]
+    # y_axis=[]
 
     ans = toBinary(pc)
     ans = ans[8:]
@@ -575,3 +581,12 @@ while (1):
         break
 for i in mem:
     print(i)
+
+
+
+plt.scatter(x_axis,y_axis)
+plt.title("Memory address v/s clock cycle")
+plt.xlabel("clock cycle")
+plt.ylabel("Memory address")
+plt.show()
+
