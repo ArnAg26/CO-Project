@@ -2,8 +2,6 @@
 import sys
 import matplotlib.pyplot as plt
 
-
-
 def toBinary(deci):
 
     st=""
@@ -12,9 +10,6 @@ def toBinary(deci):
         deci=deci//2
     
     return st[::-1]
-
-
-        
 
 def toDecimal(imm):
 
@@ -27,15 +22,10 @@ def toDecimal(imm):
 
     return sum
 
-
 def ls(reg, imm,pc):
-
     counter = globals()['cycle']
-
     imm_in_deci=toDecimal(imm)
-
     ls=reg_dic[reg]<<imm_in_deci
-
     reg_dic[reg]=ls%(2**16)
     if ls > 2**16 - 1:
         a = reg_dic["111"][0:-4]
@@ -45,26 +35,15 @@ def ls(reg, imm,pc):
         a = reg_dic["111"][0:-4]
         a += "0000"
         reg_dic["111"] = a
-
-
     x_axis.append(counter)
-    y_axis.append(pc)
-
-    
+    y_axis.append(pc)    
     pc+=1
-
     return pc
 
-
 def rs(reg, imm ,pc):
-
-    counter = globals()['cycle']
-   
-
+    counter = globals()['cycle']   
     imm_in_deci=toDecimal(imm)
-
     rs=reg_dic[reg]>>imm_in_deci
-
     reg_dic[reg]=rs%(2**16)
     if rs > 2**16 - 1:
         a = reg_dic["111"][0:-4]
@@ -74,120 +53,81 @@ def rs(reg, imm ,pc):
         a = reg_dic["111"][0:-4]
         a += "0000"
         reg_dic["111"] = a
-
     x_axis.append(counter)
     y_axis.append(pc)
-
-
-
     pc+=1
-
     return pc
 
 def jmp(mem_add,pc):
-
     counter = globals()['cycle']
-
-
-
     pc=toDecimal(mem_add)
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
-
     x_axis.append(counter)
     x_axis.append(counter)
     y_axis.append(mem_add)
     y_axis.append(pc)
-
     return pc
     
 def jlt(mem_add,pc):
-
     counter = globals()['cycle']
-
-
-
     if reg_dic['111'][13]=='1':
         pc=toDecimal(mem_add)
-        return pc
+    else:
+        pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
-
     x_axis.append(counter)
     x_axis.append(counter)
     y_axis.append(mem_add)
     y_axis.append(pc)
-
-
     return pc+1
 
 def jgt(mem_add,pc):
-
     counter = globals()['cycle']
-
     if reg_dic['111'][14]=='1':
         pc=toDecimal(mem_add)
-        return pc
+    else:
+        pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
-
     x_axis.append(counter)
     x_axis.append(counter)
     y_axis.append(mem_add)
     y_axis.append(pc)
-
-
     return pc+1
 
 def je(mem_add,pc):
-
     counter = globals()['cycle']
-
-
-
     if reg_dic['111'][15]=='1':
         pc=toDecimal(mem_add)
-        # return pc
+    else:
+        pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
-
     x_axis.append(counter)
     x_axis.append(counter)
     y_axis.append(mem_add)
     y_axis.append(pc)
-
     return pc+1
 
-
-
 def AND(r1,r2,r3,pc):
-
     counter = globals()['cycle']
-
-
-    #r1&r2=r3
     reg_dic[r3]=(reg_dic[r1]&reg_dic[r2])%(2**16)
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
     pc+=1
-
     x_axis.append(counter)
     y_axis.append(pc)
-
     return pc
 
-
 def OR(r1,r2,r3,pc):
-
     counter = globals()['cycle']
-
-    
-
     reg_dic[r3]=(reg_dic[r1]|reg_dic[r2])%(2**16)
     a = reg_dic["111"][0:-4]
     a += "0000"
@@ -195,41 +135,21 @@ def OR(r1,r2,r3,pc):
     x_axis.append(counter)
     y_axis.append(pc)
     pc+=1
-
-
     return pc
 
-
 def XOR(r1,r2,r3,pc):
-
     counter = globals()['cycle']
-    
-
     reg_dic[r3]=(reg_dic[r1]^reg_dic[r2])%(2**16)
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
-
     x_axis.append(counter)
     y_axis.append(pc)
     pc+=1
-
     return pc
 
-
-
-
 def NOT(r1,r2,pc):
-
     counter = globals()['cycle']
-    
-
-    # reg_dic[r2]=(~reg_dic[r1])%(2**16)
-    # a = reg_dic["111"][0:-4]
-    # a += "0000"
-    # reg_dic["111"] = a
-    # pc+=1
-
     x=toBinary(reg_dic[r1])
     st=""
     for i in x:
@@ -237,27 +157,15 @@ def NOT(r1,r2,pc):
             st+="1"
         else:
             st+="0"
-
     z=toDecimal(st)
-    # print(z)
-    reg_dic[r2]=z%(2**16)
-    
+    reg_dic[r2]=z%(2**16)  
     x_axis.append(counter)
     y_axis.append(pc)
-
-
-    #st --> not of the given value in binary
     pc+=1
-
     return pc
 
 def ld(r1,mem_add,pc):
-
     counter = globals()['cycle']
-
-
-
-
     a=toDecimal(mem[toDecimal(mem_add)])
     reg_dic[r1]=a
     pc+=1
@@ -265,42 +173,30 @@ def ld(r1,mem_add,pc):
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
-
     x_axis.append(counter)
     x_axis.append(counter)
     y_axis.append(pc)
     y_axis.append(mem_add)
-
-
     return pc
 
     
     
 def store(r1,mem_add,pc):
-
     counter = globals()['cycle']
-
-
     a=toBinary(reg_dic[r1])
     mem[toDecimal(mem_add)]=a
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
-
     x_axis.append(counter)
     x_axis.append(counter)
     y_axis.append(pc)
     y_axis.append(mem_add)
     pc+=1
-
     return pc
     
-    
-
 def add(r1,r2,r3,pc):
-
     counter = globals()['cycle']
-
     q = reg_dic[r1]
     r = reg_dic[r2]
     p = reg_dic[r3]
@@ -321,10 +217,7 @@ def add(r1,r2,r3,pc):
     return pc
 
 def sub(r1,r2,r3,pc):
-
     counter = globals()['cycle']
-
-
     p = reg_dic[r1]
     q = reg_dic[r2]
     r = reg_dic[r3]
@@ -340,22 +233,17 @@ def sub(r1,r2,r3,pc):
         a += "0000"
         reg_dic["111"] = a
         reg_dic[r3] = 0
-
     x_axis.append(counter)
     y_axis.append(pc)
-
     pc += 1
     return pc
 
 def mul(r1,r2,r3,pc):
-
     counter = globals()['cycle']
-
     q = reg_dic[r1]
     p = reg_dic[r2]
     r = reg_dic[r3]
     r = q * p
-    #print (reg_dic[r2],reg_dic[r1],r)
     if r > 2**16 -1:
         a = reg_dic["111"][0:-4]
         a += "1000"
@@ -367,16 +255,13 @@ def mul(r1,r2,r3,pc):
         a += "0000"
         reg_dic["111"] = a
         reg_dic[r3] = 0
-
     x_axis.append(counter)
     y_axis.append(pc)
-
     pc += 1
     return pc
 
 def div(r1,r2,pc):
     counter = globals()['cycle']
-
     p = reg_dic[r1]
     q = reg_dic[r2]
     if q != 0:
@@ -387,15 +272,12 @@ def div(r1,r2,pc):
     pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
-
     x_axis.append(counter)
     y_axis.append(pc)
-
     return pc
 
 def movim(r1,imm,pc):
     counter = globals()['cycle']
-
     ans = toDecimal(imm)
     reg_dic[r1] = ans
     pc += 1
@@ -407,7 +289,6 @@ def movim(r1,imm,pc):
     
 def movre(r1,r2,pc):
     counter = globals()['cycle']
-
     if r1 == "111":
         ans = toDecimal(reg_dic["111"])
         reg_dic[r2] = ans
@@ -440,7 +321,6 @@ def CMP(r1,r2,pc):
     y_axis.append(pc)
     pc += 1
     return pc
-
 
 def Execution_unit(string,pc):
     opcode = string[0:5]
@@ -537,33 +417,18 @@ n=len(mem)
 for i in range(n,256):
     mem.append('0000000000000000')
 
-
-
-
-
 reg_dic={'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':'0000000000000000'}
 label_dic = {}
 variable_dic = {}
-
-
 pc=0
-
 cycle=1
-
 x_axis=[]
 y_axis=[]
-
-
 while (1):
-    # x_axis=[]
-    # y_axis=[]
-
     ans = toBinary(pc)
     ans = ans[8:]
     print(ans,end=" ")
-
     pc=Execution_unit(mem[pc],pc)
-
     print(toBinary(reg_dic['000']),end=" ")
     print(toBinary(reg_dic['001']),end=" ")
     print(toBinary(reg_dic['010']),end=" ")
@@ -572,11 +437,7 @@ while (1):
     print(toBinary(reg_dic['101']),end=" ")
     print(toBinary(reg_dic['110']),end=" ")
     print(reg_dic['111'])
-
-    # print(reg_dic)
-
     cycle+=1
-
     if pc==256:
         break
 for i in mem:
@@ -589,4 +450,3 @@ plt.title("Memory address v/s clock cycle")
 plt.xlabel("clock cycle")
 plt.ylabel("Memory address")
 plt.show()
-
