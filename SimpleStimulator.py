@@ -83,7 +83,7 @@ def jlt(mem_add,pc):
     x_axis.append(counter)
     y_axis.append(mem_add)
     y_axis.append(pc)
-    return pc+1
+    return pc
 
 def jgt(mem_add,pc):
     counter = globals()['cycle']
@@ -98,7 +98,7 @@ def jgt(mem_add,pc):
     x_axis.append(counter)
     y_axis.append(mem_add)
     y_axis.append(pc)
-    return pc+1
+    return pc
 
 def je(mem_add,pc):
     counter = globals()['cycle']
@@ -113,7 +113,7 @@ def je(mem_add,pc):
     x_axis.append(counter)
     y_axis.append(mem_add)
     y_axis.append(pc)
-    return pc+1
+    return pc
 
 def AND(r1,r2,r3,pc):
     counter = globals()['cycle']
