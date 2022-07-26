@@ -74,7 +74,9 @@ def jlt(mem_add,pc):
     counter = globals()['cycle']
     if reg_dic['111'][13]=='1':
         pc=toDecimal(mem_add)
+        y_axis.append(pc)
     else:
+        y_axis.append(pc)
         pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
@@ -82,37 +84,38 @@ def jlt(mem_add,pc):
     x_axis.append(counter)
     x_axis.append(counter)
     y_axis.append(mem_add)
-    y_axis.append(pc)
     return pc
 
 def jgt(mem_add,pc):
     counter = globals()['cycle']
     if reg_dic['111'][14]=='1':
         pc=toDecimal(mem_add)
+        y_axis.append(pc)
     else:
+        y_axis.append(pc)
         pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
     x_axis.append(counter)
     x_axis.append(counter)
-    y_axis.append(mem_add)
-    y_axis.append(pc)
+    y_axis.append(toDecimal(mem_add))
     return pc
 
 def je(mem_add,pc):
     counter = globals()['cycle']
     if reg_dic['111'][15]=='1':
         pc=toDecimal(mem_add)
+        y_axis.append(pc)
     else:
+        y_axis.append(pc)
         pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
     x_axis.append(counter)
     x_axis.append(counter)
-    y_axis.append(mem_add)
-    y_axis.append(pc)
+    y_axis.append(toDecimal(mem_add))
     return pc
 
 def AND(r1,r2,r3,pc):
@@ -121,9 +124,9 @@ def AND(r1,r2,r3,pc):
     a = reg_dic["111"][0:-4]
     a += "0000"
     reg_dic["111"] = a
-    pc+=1
     x_axis.append(counter)
     y_axis.append(pc)
+    pc+=1
     return pc
 
 def OR(r1,r2,r3,pc):
@@ -168,7 +171,6 @@ def ld(r1,mem_add,pc):
     counter = globals()['cycle']
     a=toDecimal(mem[toDecimal(mem_add)])
     reg_dic[r1]=a
-    pc+=1
     variable_dic[toDecimal(mem_add)]=a
     a = reg_dic["111"][0:-4]
     a += "0000"
@@ -177,6 +179,7 @@ def ld(r1,mem_add,pc):
     x_axis.append(counter)
     y_axis.append(pc)
     y_axis.append(mem_add)
+    pc+=1
     return pc
 
     
@@ -269,22 +272,22 @@ def div(r1,r2,pc):
         rem = p - quo*q
         reg_dic["000"] = quo
         reg_dic["001"] = rem
-    pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
     x_axis.append(counter)
     y_axis.append(pc)
+    pc += 1
     return pc
 
 def movim(r1,imm,pc):
     counter = globals()['cycle']
     ans = toDecimal(imm)
     reg_dic[r1] = ans
-    pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
     x_axis.append(counter)
     y_axis.append(pc)
+    pc += 1
     return pc
     
 def movre(r1,r2,pc):
@@ -294,11 +297,11 @@ def movre(r1,r2,pc):
         reg_dic[r2] = ans
     else:
         reg_dic[r2] = reg_dic[r1]
-    pc += 1
     a = reg_dic["111"][0:-4]
     a += "0000"
     x_axis.append(counter)
     y_axis.append(pc)
+    pc += 1
     return pc
 
 def CMP(r1,r2,pc):
@@ -445,8 +448,10 @@ for i in mem:
 
 
 
-plt.scatter(x_axis,y_axis)
-plt.title("Memory address v/s clock cycle")
-plt.xlabel("clock cycle")
-plt.ylabel("Memory address")
-plt.show()
+# plt.scatter(x_axis,y_axis)
+# plt.title("Memory address v/s clock cycle")
+# plt.xticks(x_axis)
+# plt.yticks(y_axis)
+# plt.xlabel("clock cycle")
+# plt.ylabel("Memory address")
+# plt.show()
