@@ -279,6 +279,19 @@ def syntax_error(ins_l,linelist):
     # else:
     #     return -1
     
+def length(l):
+    count = 0
+    for i in l:
+        if i[0][-1] == ":" :
+            i = i[1:]
+        if i == []:
+            pass
+        else:
+            count+=1
+    if count > 256:
+        return 1
+    else:
+        return 0
 def ErrorCheck(lst,linelist,extra):        #ins_l
     varlist=[]
     labellist=[]
@@ -331,6 +344,9 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
     z,y=IllegalFlag(lst,linelist)
     if z==-1:
         return "Line "+y+" Illegal usage of flag"
+    z = length(lst)
+    if z == 1:
+        print("Length of input exceed")
     return "No Errors"
 def input(L):
     ctr=1
