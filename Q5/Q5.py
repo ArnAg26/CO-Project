@@ -1,20 +1,23 @@
-from email.headerregistry import Address
 from math import *
 
-print("------------------4 Types of Memory------------------")
-print("1. Bit Addressable Memory - Cell Size = 1 bit")
+print("--------------------4 Types of Memory--------------------------------")
+print("1. Bit Addressable Memory    - Cell Size = 1 bit")
 print("2. Nibble Addressable Memory - Cell Size = 4 bit")
-print("3. Byte Addressable Memory - Cell Size = 8 bits(standard)")
-print("4. Word Addressable Memory - Cell Size = Word Size (depends on CPU)")
+print("3. Byte Addressable Memory   - Cell Size = 8 bits(standard)")
+print("4. Word Addressable Memory   - Cell Size = Word Size (depends on CPU)")
 
-Space=input("Enter the space in the memory")
-Addressability=input("Enter how the memory is addressable (serial number)")
+Space=input("Enter the space in the memory ")
+Addressability=input("Enter how the memory is addressable ")
 if Addressability=="4":
-    wordsize=int(input("Enter cpu-bit size(in bits)"))
+    wordsize=int(input("Enter cpu-bit size(in bits) "))
 else:
     wordsize=0
     
-query=input("Enter type of query:1,2a,2b")
+print("-----------------Types of Query---------------------------")
+print("1  : ISA and Instructions related")
+print("2a : System enhancement related :: Changing type of memory")
+print("2b : System enhancement related :: Size of memory")
+query=input("Enter type of query:1,2a,2b ")
 if query=="1":
     instnsize=int(input("Enter size of instruction"))
     reglen=int(input("Enter length of registers"))
@@ -49,59 +52,59 @@ else:
     sp = int(Space[0:-2])
     if (Space[-2] == 'M'):
         sp *= 2**20
-    if (Space[-2] == 'K'):
+    elif (Space[-2] == 'K'):
         sp *= 2**10
-    if (Space[-2] == 'G'):
+    elif (Space[-2] == 'G'):
         sp *= 2**30
-    if (Space[-1 == 'B']):
+    if (Space[-1] == 'B'):
         sp *= 8  
     if query == "2a":
         ans = 0
         word = int(input("bits of cpu: "))
-        new = int(input("New type of memory"))
-        if type == "1":
-            if new == "1":
+        new = (input("New type of memory "))
+        if Addressability == "Bit":
+            if new == "Bit":
                 ans = 0
-            elif new == "2":
+            elif new == "Nibble":
                 ans = -2
-            elif new == "3":
+            elif new == "Byte":
                 ans = -3
             else:
                 ans = -log(word,2)
-        elif type == "2":
-            if new == "1":
+        elif Addressability == "Nibble":
+            if new == "Bit":
                 ans = 2
-            elif new == "2":
+            elif new == "Nibble":
                 ans = 0
-            elif new == "3":
+            elif new == "Byte":
                 ans = -1
-            elif new == "4":
+            else:
                 ans = -log(word,2) + 2
-        elif type == "3":
-            if new == "1":
+        elif Addressability == "Byte":
+            if new == "Bit":
                 ans = 3
-            elif new == "2":
+            elif new == "Nibble":
                 ans = 1
-            elif new == "3":
+            elif new == "Byte":
                 ans = 0
             else:
                 ans = -log(word,2) + 3
-        elif type == "4":
-            if new == "1":
+        else:
+            if new == "Bit":
                 ans = log(word,2)
-            elif new == "2":
+            elif new == "Nibble":
                 ans = log(word,2) - 2
-            elif new == "3":
+            elif new == "Byte":
                 ans = log(word,2) - 3
             else:
                 ans = 0
-        print (ans," '+represnt excess & - represent saved'")
+        print (ans," ('+represnt excess & - represent saved')")
     else:
         word = int(input("bits of cpu: "))    
         pins = int(input("no of pins used: "))
-        type = int(input("Mention the serial number of current type of memory: "))
+        type = (input("Mention the serial number of current type of memory: "))
         st = pow(2,pins)
-        if type == "1":
+        if type == "Bit":
             if (st >= 2**33):
                 i = st/(2**33)
                 print(i," GB")
@@ -116,7 +119,7 @@ else:
                 print(i," B")
             else:
                 print(st," b")
-        elif type == "2":
+        elif type == "Nibble":
             if (st >= 2**31):
                 i = st/(2**31)
                 print(i," GB")
@@ -131,7 +134,7 @@ else:
                 print(i," B")
             else:
                 print(st * 4," b")
-        elif type == "3":
+        elif type == "Byte":
             if (st >= 2**30):
                 i = st/(2**30)
                 print(i," GB")
@@ -143,7 +146,7 @@ else:
                 print(i," KB")
             else:
                 print(st," B")
-        elif type == "4":
+        else:
             word = log(word,2)
             st = st * 2 **(word-3)
             if (st >= 2**30):
