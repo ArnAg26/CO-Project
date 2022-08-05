@@ -107,7 +107,7 @@ def jlt(mem_add,pc):
     x_axis.append(counter)
     y_axis.append(mem_add)
     y_axis.append(pc)
-    return pc+1
+    return pc
 
 def jgt(mem_add,pc):
     counter = globals()['cycle']
@@ -148,8 +148,8 @@ def AND(r1,r2,r3,pc):
 
 def OR(r1,r2,r3,pc):
     counter = globals()['cycle']
-    p=reg_dic[r1]
-    q=reg_dic[r2]
+    p=toDecimal(reg_dic[r1])
+    q=toDecimal(reg_dic[r2])
     reg_dic[r3]=toBinary((p|q)%(2**16))
     ResetFlag()
     x_axis.append(counter)
@@ -159,8 +159,8 @@ def OR(r1,r2,r3,pc):
 
 def XOR(r1,r2,r3,pc):
     counter = globals()['cycle']
-    p=reg_dic[r1]
-    q=reg_dic[r2]
+    p=toDecimal(reg_dic[r1])
+    q=toDecimal(reg_dic[r2])
     reg_dic[r3]=toBinary((p^q)%(2**16))
     ResetFlag()
     x_axis.append(counter)
@@ -328,6 +328,12 @@ def div(r1,r2,pc):
         reg_dic["001"] = toBinary(rem)
     pc += 1
     ResetFlag()
+    if q == 0:
+        reg_dic["000"] = toBinary(0)
+        reg_dic["000"] = toBinary(1)
+        a = reg_dic["111"][0:-4]
+        a += "1000"
+        reg_dic["111"] = a
     x_axis.append(counter)
     y_axis.append(pc)
     return pc
@@ -519,8 +525,8 @@ for i in mem:
 
 
 
-plt.scatter(x_axis,y_axis)
-plt.title("Memory address v/s clock cycle")
-plt.xlabel("clock cycle")
-plt.ylabel("Memory address")
-plt.show()
+# plt.scatter(x_axis,y_axis)
+# plt.title("Memory address v/s clock cycle")
+# plt.xlabel("clock cycle")
+# plt.ylabel("Memory address")
+# plt.show()
