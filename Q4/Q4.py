@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-import simplesimulator as simp
+import SimpleStimulator as simp
 
 # print(simp.x_axis)
 # print(simp.y_axis)
