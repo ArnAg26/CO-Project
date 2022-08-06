@@ -1,6 +1,14 @@
 #common file for qs 2
+from re import M
 import sys
 import matplotlib.pyplot as plt
+
+def isvalid_float(ans):
+    if len(ans) > 7:
+        x = ans[7:]
+        if ("1" in x) or("." in x):
+            return 0
+    return 1
 
 def toBinary(deci):
 
@@ -56,10 +64,25 @@ def immfloating(imm):
     mantissa=imm[3:]
     ans="1."
     ans+=mantissa
-    print(ans)
+    # print(ans)
     exp=toDecimal(exp)
     f=binaryfloating(ans)
     ans=f*(2**exp)
+    return ans
+def floatingimm(e2):
+    e2 = floatingbinary(float(e2[1:]))
+    n = e2.index(".") - 1
+    x = bin(n)[2:]
+    for i in range(0,3-len(x),1):
+        ans += "0"
+    ans += x
+    for i in e2[1:7]:
+        if i == ".":
+            pass
+        else:
+            ans += i
+    for i in range(0,16-len(ans)):
+        ans += "0"
     return ans
 
 def ls(reg,imm,pc):
@@ -218,6 +241,7 @@ def add(r1,r2,r3,pc):
     r = toDecimal(reg_dic[r2])
     p = toDecimal(reg_dic[r3])
     p = q + r
+    ResetFlag()
     if p > 2**16 -1:
         a = reg_dic["111"][0:-4]
         a += "1000"
@@ -225,7 +249,6 @@ def add(r1,r2,r3,pc):
         reg_dic[r3] = toBinary(p % (2**16))
     else:
         reg_dic[r3] =toBinary(p)
-        ResetFlag()
     x_axis.append(counter)
     y_axis.append(pc)
     pc += 1
@@ -239,7 +262,8 @@ def addf(r1,r2,r3,pc):  #Overflow condition unclear
     q=immfloating(q)
     r=p+q
     r=floatingbinary(r)
-    if len(r)>7:
+    ResetFlag()
+    if not(isvalid_float)(r) :
         reg_dic[r3]='0000000000000000'
         a = reg_dic["111"][0:-4]
         a += "1000"
@@ -247,8 +271,16 @@ def addf(r1,r2,r3,pc):  #Overflow condition unclear
     else:
         ind=r.index(".")
         exp=ind-1
-        mantissa=r[len(r)-5:]
-        ResetFlag()
+        mantissa=''
+        count = 0
+        for i in r[1:]:
+            count += 1
+            if i != ".":
+                mantissa += i
+            if count >5:
+                break
+        for i in range(0,5 - len(mantissa)):
+            mantissa+="0"
         reg_dic[r3]='00000000'+(toBinary(exp)[-3:]+mantissa)
         
     return pc+1
@@ -259,23 +291,34 @@ def subf(r1,r2,r3,pc):
     p=immfloating(p)
     q=immfloating(q)
     r=p-q
-    if r<0:
-        a = reg_dic["111"][0:-4]
-        a += "1000"
-        reg_dic["111"] = a
-        reg_dic[r3]='0000000000000000'
-    r=immfloating(r)
-    if len(r)>7:
+    ResetFlag()
+    if r<1:
         a = reg_dic["111"][0:-4]
         a += "1000"
         reg_dic["111"] = a
         reg_dic[r3]='0000000000000000'
     else:
-        ind=r.index(".")
-        exp=ind-1
-        mantissa=r[len(r)-5:]
-        ResetFlag()
-        reg_dic[r3]='00000000'+(toBinary(exp)[-3:]+mantissa)
+        r=floatingbinary(r)
+        if not(isvalid_float)(r) :
+            reg_dic[r3]='0000000000000000'
+            a = reg_dic["111"][0:-4]
+            a += "1000"
+            reg_dic["111"] = a
+        else:
+            ind=r.index(".")
+            exp=ind-1
+            mantissa=''
+            count = 0
+            for i in r[1:]:
+                count += 1
+                if i != ".":
+                    mantissa += i
+                if count >5:
+                    break
+            for i in range(0,5 - len(mantissa)):
+                mantissa+="0"
+            ResetFlag()
+            reg_dic[r3]='00000000'+(toBinary(exp)[-3:]+mantissa)
     return pc+1
     
 
@@ -285,13 +328,13 @@ def sub(r1,r2,r3,pc):
     q = toDecimal(reg_dic[r2])
     r = toDecimal(reg_dic[r3])
     r = p - q
+    ResetFlag()
     if r < 0:
         a = reg_dic["111"][0:-4]
         a += "1000"
         reg_dic["111"] = a
         reg_dic[r3] = toBinary(0)
     else:
-        ResetFlag()
         reg_dic[r3] =toBinary(r)
     x_axis.append(counter)
     y_axis.append(pc)
@@ -304,13 +347,13 @@ def mul(r1,r2,r3,pc):
     p = toDecimal(reg_dic[r2])
     r = toDecimal(reg_dic[r3])
     r = q * p
+    ResetFlag()
     if r > 2**16 -1:
         a = reg_dic["111"][0:-4]
         a += "1000"
         reg_dic["111"] = a
         reg_dic[r3] = toBinary(r % (2**16))
     else:
-        ResetFlag()
         reg_dic[r3] = toBinary(r)
     x_axis.append(counter)
     y_axis.append(pc)
@@ -372,6 +415,7 @@ def CMP(r1,r2,pc):
     counter = globals()['cycle']
     p = toDecimal(reg_dic[r1])
     q = toDecimal(reg_dic[r2])
+    ResetFlag()
     if (p>q):
         a = reg_dic["111"][0:-4]
         a += "0010"
