@@ -1,6 +1,7 @@
 import sys
 
 def floatingbinary(m):
+    m = float(m)
     ans = bin(int(m))[2:]
     p1 = m - (int (m))
     n = len(str(p1)) - 2
@@ -15,9 +16,11 @@ def floatingbinary(m):
     return (ans)
 
 def isvalid_float(m):
-    ans = floatingbinary(ans)
+    ans = floatingbinary(m)
     if len(ans) > 7:
-        return 0
+        x = ans[7:]
+        if ("1" in x) or("." in x):
+            return 0
     return 1
 
 def haltError(lst,linelist):
@@ -94,7 +97,7 @@ def ImmediateError(lst,linelist):             #insl_l
         elif lst[i][0] == "movf" and lst[i][2][0]=="$":
             if "." not in lst[i][2][1:]:
                 return -3,linelist[i]
-            elif ~isvalid_float(lst[i][2][1:]):
+            elif not(isvalid_float(lst[i][2][1:])):
                 return -1,linelist[i]            
         elif lst[i][0] in ["ls","rs"]:
             if lst[i][2][0]!="$":
@@ -337,7 +340,7 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
     if z==-2:
         return "Line "+y+" Immediate cannot be floating point number"
     if z == -3:
-        return "Line "+y+" Immediate cannot be int number"
+        return "Line "+y+" Immediate is not valid"
     z,y=is_valid_opcode(lst,linelist)
     if z==-1:
         return "Line "+y+" Invalid instruction used"
@@ -374,6 +377,9 @@ def input(L):
         print("Line",len(L),"Halt Instruction missing")
         return 0
     #print(linelist)
+    if len(ins_l) > 256:
+        print("Memory Exceed")
+        return 0
     x = (ErrorCheck(ins_l,linelist,extra))
             
     if x ==  "No Errors":
@@ -384,7 +390,7 @@ def input(L):
     
 def addf(e1,e2,e3):
     ans = ""
-    ans += dic_isa["add"]["opcode"]
+    ans += dic_isa["addf"]["opcode"]
     ans += "00"
     ans += dic_r[e1]
     ans += dic_r[e2]
@@ -393,7 +399,7 @@ def addf(e1,e2,e3):
 
 def subf(e1,e2,e3):
     ans = ""
-    ans += dic_isa["add"]["opcode"]
+    ans += dic_isa["subf"]["opcode"]
     ans += "00"
     ans += dic_r[e1]
     ans += dic_r[e2]
@@ -405,13 +411,18 @@ def movf(e1,e2):
     ans +=  dic_isa["movf"]["opcode"]
     ans +=  dic_r[e1]
     e2 = floatingbinary(float(e2[1:]))
-    n = len(e2) - e2.index(".") - 1
-    ans += bin(n)[2:]
-    for i in e2[1:]:
+    n = e2.index(".") - 1
+    x = bin(n)[2:]
+    for i in range(0,3-len(x),1):
+        ans += "0"
+    ans += x
+    for i in e2[1:7]:
         if i == ".":
             pass
         else:
             ans += i
+    for i in range(0,16-len(ans)):
+        ans += "0"
     return ans
         
 def add(e1,e2,e3):
