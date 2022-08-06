@@ -30,14 +30,14 @@ if query=="1":
     a=round(log(s,2)+dict[Space[-2]])
     bits=Space[-1]
     if bits=='B':
-        Adrress={'byte':0,'nibble':-1,'bit':-3,'word':wordsize}
-        if Addressability=="word":
-            Adrress['word']=round(log(wordsize/8,2))
+        Adrress={'1':-3,'2':-1,'3':0,'4':wordsize}
+        if Addressability=="4":
+            Adrress['4']=round(log(wordsize/8,2))
         P=a-Adrress[Addressability]
     else:
-        Adrress={'byte':3,'nibble':2,'bit':0,'word':wordsize}
-        if Addressability=="word":
-            Adrress['word']=round(log(wordsize,2))
+        Adrress={'1':0,'2':2,'3':3,'4':wordsize}
+        if Addressability=="4":
+            Adrress['4']=round(log(wordsize,2))
         P=a-Adrress[Addressability]
     print("Address size: ",P)
     Q=instnsize-reglen-P
@@ -48,11 +48,13 @@ if query=="1":
     print("Maximum no of instruction supported: ",maxinst)
     maxreg=2**reglen
     print("Maximum no of registers supported: ",maxreg)
+    if P<1 or Q<1 or R<0:
+        print("Values can't be negative")
 else:
     sp = int(Space[0:-2])
     if (Space[-2] == 'M'):
         sp *= 2**20
-    elif (Space[-2] == 'K'):
+    elif (Space[-2] == 'k'):
         sp *= 2**10
     elif (Space[-2] == 'G'):
         sp *= 2**30
@@ -62,39 +64,39 @@ else:
         ans = 0
         word = int(input("bits of cpu: "))
         new = (input("New type of memory "))
-        if Addressability == "Bit":
-            if new == "Bit":
+        if Addressability == "1":
+            if new == "1":
                 ans = 0
-            elif new == "Nibble":
+            elif new == "2":
                 ans = -2
-            elif new == "Byte":
+            elif new == "3":
                 ans = -3
             else:
                 ans = -log(word,2)
-        elif Addressability == "Nibble":
-            if new == "Bit":
+        elif Addressability == "2":
+            if new == "1":
                 ans = 2
-            elif new == "Nibble":
+            elif new == "2":
                 ans = 0
-            elif new == "Byte":
+            elif new == "3":
                 ans = -1
             else:
                 ans = -log(word,2) + 2
-        elif Addressability == "Byte":
-            if new == "Bit":
+        elif Addressability == "3":
+            if new == "1":
                 ans = 3
-            elif new == "Nibble":
+            elif new == "2":
                 ans = 1
-            elif new == "Byte":
+            elif new == "3":
                 ans = 0
             else:
                 ans = -log(word,2) + 3
         else:
-            if new == "Bit":
+            if new == "1":
                 ans = log(word,2)
-            elif new == "Nibble":
+            elif new == "2":
                 ans = log(word,2) - 2
-            elif new == "Byte":
+            elif new == "3":
                 ans = log(word,2) - 3
             else:
                 ans = 0
@@ -104,7 +106,7 @@ else:
         pins = int(input("no of pins used: "))
         type = (input("Mention the serial number of current type of memory: "))
         st = pow(2,pins)
-        if type == "Bit":
+        if type == "1":
             if (st >= 2**33):
                 i = st/(2**33)
                 print(i," GB")
@@ -113,13 +115,13 @@ else:
                 print (i,"MB")
             elif (st >= 2**13):
                 i = st/(2**13)
-                print(i," KB")
+                print(i," kB")
             elif (st >= 2**3):
                 i = st/(2**3)
                 print(i," B")
             else:
                 print(st," b")
-        elif type == "Nibble":
+        elif type == "2":
             if (st >= 2**31):
                 i = st/(2**31)
                 print(i," GB")
@@ -128,13 +130,13 @@ else:
                 print (i,"MB")
             elif (st >= 2**11):
                 i = st/(2**11)
-                print(i," KB")
+                print(i," kB")
             elif (st >= 2**1):
                 i = st/(2**1)
                 print(i," B")
             else:
                 print(st * 4," b")
-        elif type == "Byte":
+        elif type == "3":
             if (st >= 2**30):
                 i = st/(2**30)
                 print(i," GB")
@@ -143,7 +145,7 @@ else:
                 print (i,"MB")
             elif (st >= 2**10):
                 i = st/(2**10)
-                print(i," KB")
+                print(i," kB")
             else:
                 print(st," B")
         else:
@@ -157,6 +159,6 @@ else:
                 print (i,"MB")
             elif (st >= 2**10):
                 i = st/(2**10)
-                print(i," KB")
+                print(i," kB")
             else:
                 print(st," B")
