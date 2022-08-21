@@ -1,5 +1,28 @@
 import sys
 
+def floatingbinary(m):
+    m = float(m)
+    ans = bin(int(m))[2:]
+    p1 = m - (int (m))
+    n = len(str(p1)) - 2
+    p = int(p1 * (2**n))
+    lm = bin(p)[2:]
+    len_lm = n - len(lm)
+    ans += "."
+    for i in range(0,len_lm):
+        ans += "0"
+    for i in lm:
+        ans += i
+    return (ans)
+
+def isvalid_float(m):
+    ans = floatingbinary(m)
+    if len(ans) > 7:
+        x = ans[7:]
+        if ("1" in x) or("." in x):
+            return 0
+    return 1
+
 def haltError(lst,linelist):
     if lst[-1]!=['hlt']:
         return 0,linelist[-1]
@@ -11,8 +34,11 @@ def haltError(lst,linelist):
 #print(haltError(lst))
 def VarList(lst,varlist,linelist):    #ins_l,[]
     i=0
+    regl=['R0','R1','R2','R3','R4','R5','R6','FLAGS']
     while lst[i][0]=='var':
         if len(lst[i])>2:
+            return -1,linelist[i]
+        if lst[i][1] in regl:
             return -1,linelist[i]
         varlist.append(lst[i][1])
         i+=1
@@ -22,7 +48,6 @@ def VarList(lst,varlist,linelist):    #ins_l,[]
             return -1,linelist[i]
     return 1,0
 
-
 def Labellist(lst,labellist,linelist,extra):   #ins_l,[]
     i=0
     for i in range(len(extra)):
@@ -31,24 +56,16 @@ def Labellist(lst,labellist,linelist,extra):   #ins_l,[]
         if len(ctr)>1:
             return -1,linelist[i]
 
-    
 
-    # print(extra)
+
+
     for i in range(len(lst)):
-        # print(labellist)
-        # if len(lst[i])>1 and lst[i][1][-1]==":":
-        #     return -1
         if lst[i][0][-1]==":":
             if lst[i][0][:-1] in labellist:
                 return -1,linelist[i]
             else:
                 labellist.append(lst[i][0][:-1])
-    
-    
-    
-    # for i in range(len(extra)):
-    #     if extra[i]
-    
+
     return 1,0
 
 def UndefinedVariables(lst,varlist,labellist,linelist):  #ins_l, varlist, labellist
@@ -60,9 +77,7 @@ def UndefinedVariables(lst,varlist,labellist,linelist):  #ins_l, varlist, labell
             elif y not in varlist and y in labellist:
                 return 0,linelist[i]
     return 1,0
-            
-            
-            
+                    
 def UndefinedLabels(lst,varlist,labellist,linelist):     #ins_l,varlist,labellist
     for i in range(len(lst)):
         if lst[i][0] in ["jmp","jgt","je","jlt"]:
@@ -73,7 +88,6 @@ def UndefinedLabels(lst,varlist,labellist,linelist):     #ins_l,varlist,labellis
                 return 0,linelist[i]
     return 1,0
                 
-        
 def ImmediateError(lst,linelist):             #insl_l
     for i in range(len(lst)):
         if lst[i][0]=="mov" and lst[i][2][0]=="$":
@@ -81,6 +95,13 @@ def ImmediateError(lst,linelist):             #insl_l
                 return -2,linelist[i]
             elif int(lst[i][2][1:])<0 or int(lst[i][2][1:])>255:
                 return -1,linelist[i]
+        elif lst[i][0] == "movf" and lst[i][2][0]=="$":
+            if lst[i][2][1] == "0":
+                return -3,linelist[i]
+            if "." not in lst[i][2][1:]:
+                return -3,linelist[i]
+            elif not(isvalid_float(lst[i][2][1:])):
+                return -1,linelist[i]            
         elif lst[i][0] in ["ls","rs"]:
             if lst[i][2][0]!="$":
                 return 0,linelist[i]
@@ -95,7 +116,7 @@ def IllegalFlag(lst,linelist):
         if lst[i][0] in ["add","sub","mul","xor","or","and"]:
             # print(lst[i])
             if lst[i][1]=="FLAGS" or lst[i][2]=="FLAGS" or lst[i][3]=="FLAGS":
-                # print(lst[i][0])
+                # print(lst[i])
                 return -1,linelist[i]
         elif lst[i][0] in ["cmp","not","div"]:
             if lst[i][1]=="FLAGS" or lst[i][2]=="FLAGS":
@@ -108,17 +129,11 @@ def IllegalFlag(lst,linelist):
                 return -1,linelist[i]
     return 1,0
 
-
-
-
-
 def is_valid_opcode(ins_l,linelist):
-
-    #check if length is correct
 
     d=[' ','add','sub','mov','ld','st','mul','div','rs','ls',
     'xor','or','and','not','cmp','jmp','jlt','jgt','je','hlt',
-    'var']
+    'var','movf','addf','subf']
     # print(ins_l)
     for i in range(len(ins_l)):
 
@@ -129,11 +144,10 @@ def is_valid_opcode(ins_l,linelist):
     
     return 1,0
 
-
 def error_len(ins_l,linelist):
 
     d={'add':4,'sub':4,'mov':3,'ld':3,'st':3,'mul':4,'div':3,'rs':3,'ls':3,'xor':4,'or':4,'and':4,
-    'not':3,'cmp':3,'jmp':2,'jlt':2,'jgt':2,'je':2,'hlt':1,'var':2}
+    'not':3,'cmp':3,'jmp':2,'jlt':2,'jgt':2,'je':2,'hlt':1,'var':2,'movf': 3,'addf':4,'subf':4}
 
     for i in range(len(ins_l)):
         
@@ -144,7 +158,6 @@ def error_len(ins_l,linelist):
             return -1,linelist[i]
     
     return 1,0
-
 
 def reg_error_l1(l1):
 
@@ -178,7 +191,6 @@ def reg_error_l3(l3):
     reg1=l3[1]
     reg2=l3[2]
     reg3=l3[3]
-
     regl=['R0','R1','R2','R3','R4','R5','R6','FLAGS']
     
     if (reg1 not in regl) or (reg2 not in regl) or (reg3 not in regl):
@@ -221,7 +233,7 @@ def syntax_error(ins_l,linelist):
     l2=[]
     l3=[]
 
-    d3=['add','sub','mul','xor','or','and']
+    d3=['add','sub','mul','xor','or','and','addf','subf']
     d2=['div','not','cmp']
     d1=['ls','rs','ld','st']
 
@@ -231,11 +243,15 @@ def syntax_error(ins_l,linelist):
 
         if ins_l[i][0][-1]==":":
             continue
-        elif ins_l[i][0]=='mov':
+        elif ins_l[i][0]=='mov' :
             a=check_mov(ins_l[i][1:],linelist)
             if (a==-1):
                 return -1,linelist[i]
-
+        elif ins_l[i][0] == 'movf':
+            a=check_mov(ins_l[i][1:],linelist)
+            if (a==-1):
+                return -1,linelist[i]
+            
         elif ins_l[i][0] in d1:
             l1.append(ins_l[i])
 
@@ -279,19 +295,6 @@ def syntax_error(ins_l,linelist):
     # else:
     #     return -1
     
-def length(l):
-    count = 0
-    for i in l:
-        if i[0][-1] == ":" :
-            i = i[1:]
-        if i == []:
-            pass
-        else:
-            count+=1
-    if count > 256:
-        return 1
-    else:
-        return 0
 def ErrorCheck(lst,linelist,extra):        #ins_l
     varlist=[]
     labellist=[]
@@ -301,15 +304,6 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
         return "Line "+y+" Halt used before last instruction"
     if z==0:
         return "Line "+y+" Halt not used to terminate program"
-    z,y=is_valid_opcode(lst,linelist)
-    if z==-1:
-        return "Line "+y+" Invalid instruction used"
-    z,y=error_len(lst,linelist)
-    if z==-1:
-        return "Line "+y+" Invalid syntax"
-    z,y=syntax_error(lst,linelist)
-    if z==-1:
-        return "Line "+y+" Invalid Syntax"
     z,y=VarList(lst,varlist,linelist)
     if z==1:
         pass
@@ -324,13 +318,6 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
     elif (z==-1):
         return "Line "+y+" Invalid use of labels"
 
-    z,y=ImmediateError(lst,linelist)
-    if z==0:
-        return "Line "+y+" $ does not preceed immediate value"
-    if z==-1:
-        return "Line "+y+" Immediate given out of range"
-    if z==-2:
-        return "Line "+y+" Immediate cannot be floating point number"
     z,y=UndefinedVariables(lst,varlist,labellist,linelist)
     if z==-1:
         return "Line "+y+" Undefined Variable"
@@ -341,12 +328,28 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
         return "Line "+y+" Undefined Label"
     if z==0:
         return "Line "+y+" Misuse of variable as label"
+    
+    z,y=is_valid_opcode(lst,linelist)
+    if z==-1:
+        return "Line "+y+" Invalid instruction used"
+    z,y=error_len(lst,linelist)
+    if z==-1:
+        return "Line "+y+" Invalid syntax"
+    z,y=syntax_error(lst,linelist)
+    if z==-1:
+        return "Line "+y+" Invalid Syntax"
     z,y=IllegalFlag(lst,linelist)
     if z==-1:
         return "Line "+y+" Illegal usage of flag"
-    z = length(lst)
-    if z == 1:
-        print("Length of input exceed")
+    z,y=ImmediateError(lst,linelist)
+    if z==0:
+        return "Line "+y+" $ does not preceed immediate value"
+    if z==-1:
+        return "Line "+y+" Immediate given out of range"
+    if z==-2:
+        return "Line "+y+" Immediate cannot be floating point number"
+    if z == -3:
+        return "Line "+y+" Immediate is not valid"
     return "No Errors"
 def input(L):
     ctr=1
@@ -373,7 +376,10 @@ def input(L):
     if len(ins_l)==0:
         print("Line",len(L),"Halt Instruction missing")
         return 0
-    #print(linelist)
+    a = sum([1 for i in ins_l if len(i)==1] )
+    if len(ins_l) - a > 255:
+        print("Memory Exceed")
+        return 0
     x = (ErrorCheck(ins_l,linelist,extra))
             
     if x ==  "No Errors":
@@ -382,8 +388,43 @@ def input(L):
         print (x)
         return 0
     
+def addf(e1,e2,e3):
+    ans = ""
+    ans += dic_isa["addf"]["opcode"]
+    ans += "00"
+    ans += dic_r[e1]
+    ans += dic_r[e2]
+    ans += dic_r[e3]
+    return ans
 
+def subf(e1,e2,e3):
+    ans = ""
+    ans += dic_isa["subf"]["opcode"]
+    ans += "00"
+    ans += dic_r[e1]
+    ans += dic_r[e2]
+    ans += dic_r[e3]
+    return ans
 
+def movf(e1,e2):
+    ans = ""
+    ans +=  dic_isa["movf"]["opcode"]
+    ans +=  dic_r[e1]
+    e2 = floatingbinary(float(e2[1:]))
+    n = e2.index(".") - 1
+    x = bin(n)[2:]
+    for i in range(0,3-len(x),1):
+        ans += "0"
+    ans += x
+    for i in e2[1:7]:
+        if i == ".":
+            pass
+        else:
+            ans += i
+    for i in range(0,16-len(ans)):
+        ans += "0"
+    return ans
+        
 def add(e1,e2,e3):
     ans = ""
     ans += dic_isa["add"]["opcode"]
@@ -586,6 +627,9 @@ if y :
         "jgt" : {"opcode" : "01101", "type" : "e"},
         "je" : {"opcode" : "01111", "type" : "e"},
         "hlt" : {"opcode" : "01010", "type" : "f"},
+        "movf" : {"opcode" : "00010", "type" : "b"},
+        "addf" : {"opcode" : "00000", "type" : "a"},
+        "subf" : {"opcode" : "00001", "type" : "a"},
     }
     memory= []
     for i in range(0,256,1) :
@@ -688,5 +732,11 @@ if y :
                 ans = je(m[1])
             elif m[0] == "hlt":
                 ans = hlt()
+            elif m[0] == "movf":
+                ans = movf(m[1],m[2])
+            elif m[0] == "addf":
+                ans = addf(m[1],m[2],m[3])
+            elif m[0] == "subf":
+                ans = subf(m[1],m[2],m[3])
         if flag == 1:
             print(ans)

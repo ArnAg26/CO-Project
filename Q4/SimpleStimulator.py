@@ -21,11 +21,12 @@ def toBinary(deci):
 
 def toDecimal(imm):
 
-    #101  len=3  1*2^(3-1)+0*2^(3-1-1).....
+    # imm = imm.strip()
     wt=len(imm);  #wt=3
     sum=0
     for i in imm:
-        sum+=int(i)*2**(wt-1)
+        if i == "1":
+            sum+= 2**(wt-1)
         wt-=1
 
     return sum
@@ -173,7 +174,7 @@ def OR(r1,r2,r3,pc):
     counter = globals()['cycle']
     p=toDecimal(reg_dic[r1])
     q=toDecimal(reg_dic[r2])
-    reg_dic[r3]=toBinary((p|q)%(2**16))
+    reg_dic[r3]=toBinary((p|q))
     ResetFlag()
     x_axis.append(counter)
     y_axis.append(pc)
@@ -184,7 +185,9 @@ def XOR(r1,r2,r3,pc):
     counter = globals()['cycle']
     p=toDecimal(reg_dic[r1])
     q=toDecimal(reg_dic[r2])
-    reg_dic[r3]=toBinary((p^q)%(2**16))
+    # print("\nxor",pc,p,q)
+    reg_dic[r3]=toBinary((p^q))
+    # print("xor",reg_dic[r3])
     ResetFlag()
     x_axis.append(counter)
     y_axis.append(pc)
@@ -193,15 +196,15 @@ def XOR(r1,r2,r3,pc):
 
 def NOT(r1,r2,pc):
     counter = globals()['cycle']
-    x=reg_dic[r1]
+    x=(reg_dic[r1])
+    # print("\nnot",x,r1)
     st=""
     for i in x:
-        if (i=='0'):
+        if (i=="0"):
             st+="1"
-        else:
+        elif (i=="1"):
             st+="0"
-    z=toDecimal(st)
-    reg_dic[r2]=toBinary(z%(2**16))
+    reg_dic[r2]=st
     ResetFlag()
     x_axis.append(counter)
     y_axis.append(pc)
@@ -211,6 +214,7 @@ def NOT(r1,r2,pc):
 def ld(r1,mem_add,pc):
     counter = globals()['cycle']
     a=mem[toDecimal(mem_add)]
+    # print("ld",toDecimal(a),pc)
     reg_dic[r1]=a
     pc+=1
     variable_dic[toDecimal(mem_add)]=a
@@ -237,6 +241,9 @@ def store(r1,mem_add,pc):
     
 def add(r1,r2,r3,pc):
     counter = globals()['cycle']
+    r1 = r1.strip()
+    r2 = r2.strip()
+    r3 = r3.strip()
     q = toDecimal(reg_dic[r1])
     r = toDecimal(reg_dic[r2])
     p = toDecimal(reg_dic[r3])
@@ -323,6 +330,7 @@ def subf(r1,r2,r3,pc):
     
 
 def sub(r1,r2,r3,pc):
+    r3 = r3.strip()
     counter = globals()['cycle']
     p = toDecimal(reg_dic[r1])
     q = toDecimal(reg_dic[r2])
@@ -343,6 +351,9 @@ def sub(r1,r2,r3,pc):
 
 def mul(r1,r2,r3,pc):
     counter = globals()['cycle']
+    r1 = r1.strip()
+    r2 = r2.strip()
+    r3 = r3.strip()
     q = toDecimal(reg_dic[r1])
     p = toDecimal(reg_dic[r2])
     r = toDecimal(reg_dic[r3])
@@ -362,6 +373,8 @@ def mul(r1,r2,r3,pc):
 
 def div(r1,r2,pc):
     counter = globals()['cycle']
+    r1 = r1.strip()
+    r2 = r2.strip()
     p = toDecimal(reg_dic[r1])
     q = toDecimal(reg_dic[r2])
     if q != 0:
@@ -385,10 +398,10 @@ def movim(r1,imm,pc):
     counter = globals()['cycle']
     ans = toDecimal(imm)
     reg_dic[r1]=toBinary(ans)
-    pc += 1
     ResetFlag()
     x_axis.append(counter)
     y_axis.append(pc)
+    pc += 1
     return pc
     
 def movre(r1,r2,pc):
@@ -397,10 +410,10 @@ def movre(r1,r2,pc):
         reg_dic[r2] = reg_dic['111']
     else:
         reg_dic[r2] = reg_dic[r1]
-    pc += 1
     ResetFlag()
     x_axis.append(counter)
     y_axis.append(pc)
+    pc += 1
     return pc
 
 def movf(r1,imm,pc):
@@ -413,8 +426,11 @@ def movf(r1,imm,pc):
 
 def CMP(r1,r2,pc):
     counter = globals()['cycle']
+    r1 = r1.strip()
+    r2 = r2.strip()
     p = toDecimal(reg_dic[r1])
     q = toDecimal(reg_dic[r2])
+    #print("\n",reg_dic[r2])
     ResetFlag()
     if (p>q):
         a = reg_dic["111"][0:-4]
@@ -448,6 +464,7 @@ def Execution_unit(string,pc):
     elif opcode == "10010":    #3
         r1 = string[5:8]
         imm = string[8:]
+        # print(imm,"1")
         pc = movim(r1,imm,pc)
     elif opcode == "10011":         #4
         r1 = string[10:13]
@@ -527,7 +544,8 @@ def Execution_unit(string,pc):
     elif opcode == "01111":           #19
         mem_add = string[8:]
         pc = je(mem_add,pc)
-    elif opcode == "01010":          #20
+    elif opcode == "01010":
+        ResetFlag()                     #20
         pc = 256
     return pc
 
@@ -542,7 +560,7 @@ n=len(mem)
 for i in range(n,256):
     mem.append('0000000000000000')
 
-reg_dic={'000':'0000000000000000','001':'0000000000000000','010':'0000000000000000','011':'0000000000000000','100':'0000000000000000','101':'0000000000000000','110':'0000000000000000','111':'0000000000000000'}
+reg_dic={"000":'0000000000000000',"001":'0000000000000000',"010":'0000000000000000',"011":'0000000000000000',"100":'0000000000000000',"101":'0000000000000000',"110":'0000000000000000',"111":'0000000000000000'}
 variable_dic = {}
 pc=0
 cycle=1
@@ -574,3 +592,11 @@ for i in mem:
 # plt.xlabel("clock cycle")
 # plt.ylabel("Memory address")
 # plt.show()
+
+plt.scatter(x_axis,y_axis)
+plt.title("Memory address v/s clock cycle")
+plt.xticks(x_axis)
+plt.yticks(y_axis)
+plt.xlabel("clock cycle")
+plt.ylabel("Memory address")
+plt.show()

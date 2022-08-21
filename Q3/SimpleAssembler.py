@@ -34,8 +34,11 @@ def haltError(lst,linelist):
 #print(haltError(lst))
 def VarList(lst,varlist,linelist):    #ins_l,[]
     i=0
+    regl=['R0','R1','R2','R3','R4','R5','R6','FLAGS']
     while lst[i][0]=='var':
         if len(lst[i])>2:
+            return -1,linelist[i]
+        if lst[i][1] in regl:
             return -1,linelist[i]
         varlist.append(lst[i][1])
         i+=1
@@ -52,19 +55,17 @@ def Labellist(lst,labellist,linelist,extra):   #ins_l,[]
         ctr=[x for x in extra[i] if x[-1]==':']
         if len(ctr)>1:
             return -1,linelist[i]
-    # print(extra)
+
+
+
+
     for i in range(len(lst)):
-        # print(labellist)
-        # if len(lst[i])>1 and lst[i][1][-1]==":":
-        #     return -1
         if lst[i][0][-1]==":":
             if lst[i][0][:-1] in labellist:
                 return -1,linelist[i]
             else:
                 labellist.append(lst[i][0][:-1])
-    # for i in range(len(extra)):
-    #     if extra[i]
-    
+
     return 1,0
 
 def UndefinedVariables(lst,varlist,labellist,linelist):  #ins_l, varlist, labellist
@@ -95,6 +96,8 @@ def ImmediateError(lst,linelist):             #insl_l
             elif int(lst[i][2][1:])<0 or int(lst[i][2][1:])>255:
                 return -1,linelist[i]
         elif lst[i][0] == "movf" and lst[i][2][0]=="$":
+            if lst[i][2][1] == "0":
+                return -3,linelist[i]
             if "." not in lst[i][2][1:]:
                 return -3,linelist[i]
             elif not(isvalid_float(lst[i][2][1:])):
@@ -113,7 +116,7 @@ def IllegalFlag(lst,linelist):
         if lst[i][0] in ["add","sub","mul","xor","or","and"]:
             # print(lst[i])
             if lst[i][1]=="FLAGS" or lst[i][2]=="FLAGS" or lst[i][3]=="FLAGS":
-                # print(lst[i][0])
+                # print(lst[i])
                 return -1,linelist[i]
         elif lst[i][0] in ["cmp","not","div"]:
             if lst[i][1]=="FLAGS" or lst[i][2]=="FLAGS":
@@ -127,8 +130,6 @@ def IllegalFlag(lst,linelist):
     return 1,0
 
 def is_valid_opcode(ins_l,linelist):
-
-    #check if length is correct
 
     d=[' ','add','sub','mov','ld','st','mul','div','rs','ls',
     'xor','or','and','not','cmp','jmp','jlt','jgt','je','hlt',
@@ -190,7 +191,6 @@ def reg_error_l3(l3):
     reg1=l3[1]
     reg2=l3[2]
     reg3=l3[3]
-
     regl=['R0','R1','R2','R3','R4','R5','R6','FLAGS']
     
     if (reg1 not in regl) or (reg2 not in regl) or (reg3 not in regl):
@@ -328,19 +328,7 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
         return "Line "+y+" Undefined Label"
     if z==0:
         return "Line "+y+" Misuse of variable as label"
-    z,y=IllegalFlag(lst,linelist)
-    if z==-1:
-        return "Line "+y+" Illegal usage of flag"
     
-    z,y=ImmediateError(lst,linelist)
-    if z==0:
-        return "Line "+y+" $ does not preceed immediate value"
-    if z==-1:
-        return "Line "+y+" Immediate given out of range"
-    if z==-2:
-        return "Line "+y+" Immediate cannot be floating point number"
-    if z == -3:
-        return "Line "+y+" Immediate is not valid"
     z,y=is_valid_opcode(lst,linelist)
     if z==-1:
         return "Line "+y+" Invalid instruction used"
@@ -350,6 +338,18 @@ def ErrorCheck(lst,linelist,extra):        #ins_l
     z,y=syntax_error(lst,linelist)
     if z==-1:
         return "Line "+y+" Invalid Syntax"
+    z,y=IllegalFlag(lst,linelist)
+    if z==-1:
+        return "Line "+y+" Illegal usage of flag"
+    z,y=ImmediateError(lst,linelist)
+    if z==0:
+        return "Line "+y+" $ does not preceed immediate value"
+    if z==-1:
+        return "Line "+y+" Immediate given out of range"
+    if z==-2:
+        return "Line "+y+" Immediate cannot be floating point number"
+    if z == -3:
+        return "Line "+y+" Immediate is not valid"
     return "No Errors"
 def input(L):
     ctr=1
@@ -376,8 +376,8 @@ def input(L):
     if len(ins_l)==0:
         print("Line",len(L),"Halt Instruction missing")
         return 0
-    #print(linelist)
-    if len(ins_l) > 256:
+    a = sum([1 for i in ins_l if len(i)==1] )
+    if len(ins_l) - a > 255:
         print("Memory Exceed")
         return 0
     x = (ErrorCheck(ins_l,linelist,extra))
@@ -427,7 +427,7 @@ def movf(e1,e2):
         
 def add(e1,e2,e3):
     ans = ""
-    ans += dic_isa["addf"]["opcode"]
+    ans += dic_isa["add"]["opcode"]
     ans += "00"
     ans += dic_r[e1]
     ans += dic_r[e2]
@@ -435,7 +435,7 @@ def add(e1,e2,e3):
     return ans
 def sub(e1,e2,e3):
     ans = ""
-    ans += dic_isa["subf"]["opcode"]
+    ans += dic_isa["sub"]["opcode"]
     ans += "00"
     ans += dic_r[e1]
     ans += dic_r[e2]
